@@ -1,0 +1,5 @@
+.idea
+.sass-cache
+*.py[co]
+db/
+localsettings.py
