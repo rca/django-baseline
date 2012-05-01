@@ -1,0 +1,9 @@
+Django==1.4
+django-social-auth==0.6.8
+gunicorn==0.14.2
+mock==0.8.0
+psycopg2==2.4.4
+simplejson==2.1.6
+South==0.7.4
+
+-e git://github.com/rca/django-tastypie.git@c1fa156e7e54da5731b9897795b990b10c857ede#egg=django_tastypie_with_uploads_dummycache_error500-dev
