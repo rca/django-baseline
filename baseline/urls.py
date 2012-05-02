@@ -8,6 +8,10 @@ from django.conf import settings
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'baseline.views.home', name='home'),
+    url(r'^404/$', 'baseline.views.notfound', name='404'),
+    url(r'^500/$', 'baseline.views.explode', name='500'),
+    url(r'^preview/404/$', 'baseline.views.preview', kwargs={'template': '404.html'}, name='404'),
+    url(r'^preview/500/$', 'baseline.views.preview', kwargs={'template': '500.html'}, name='500'),
     # url(r'^baseline/', include('baseline.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -15,5 +19,5 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    (r'^static/(?P.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    (r'^static/(.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 )
