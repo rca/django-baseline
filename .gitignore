@@ -3,4 +3,5 @@
 *.py[co]
 db/
 localsettings.py
+static
 venv
