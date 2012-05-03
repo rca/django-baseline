@@ -3,8 +3,20 @@
 {% block title %}Welcome to Baseline{% endblock %}
 
 {% block content %}
-<div class="hero-unit">
-  <h1>Welcome to baseline</h1>
-  <p>Get started with Django &amp; Heroku in seconds.</p>
+
+<div class="row">
+    <div class="span4 offset8">
+        <p class="right">{% if user.is_authenticated %}
+        Hi, {{ user }} <a class="btn btn-primary" href="/logout/">Logout</a>
+        {% else %}<a class="btn btn-primary" href="/login/google/">Google Login</a>
+        {% endif %}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="hero-unit">
+      <h1>Welcome to baseline</h1>
+      <p>Get started with Django on Heroku in seconds.</p>
+    </div>
 </div>
 {% endblock content %}

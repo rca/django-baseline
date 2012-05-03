@@ -1,4 +1,5 @@
 # Django settings for baseline project.
+from auth import *
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG

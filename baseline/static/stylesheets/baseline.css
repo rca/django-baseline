@@ -11,7 +11,7 @@ h1,h2,h3,h4,h5,h6,p {
   margin-top: 0;
   }
 
-#page {
-  width: 1024px;
-  margin: 0px auto;
+.right {
+  text-align: right;
+  margin-right: 5px;
   }
