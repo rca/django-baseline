@@ -90,7 +90,7 @@ This would be a good time to commit all the files the commands above generated:
 
 ```
 git add -A
-git commit -m'Added baseline-generated commands'
+git commit -m'Added baseline-generated configuration'
 ```
 
 Happy Hacking
