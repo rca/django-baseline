@@ -48,7 +48,7 @@ class Command(BaseCommand):
             sys.exit(0)
 
         try:
-            app = args[0]
+            app = args[0].replace('/','')
         except IndexError:
             self.print_help('manage.py', 'localurls')
             warn('App not given', color='red', name='Error', print_traceback=False, prefix='\n')
