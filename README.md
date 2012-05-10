@@ -19,3 +19,9 @@ Once the application is running on Heroku, sync the database:
 heroku run python manage.py syncdb
 heroku run python manage.py migrate
 ```
+
+And finally, to see your application:
+
+```
+heroku open
+```
