@@ -1,5 +1,23 @@
 # Django settings for baseline project.
+import os
 from auth import *
+
+def get_project_root():
+    project_root = None
+    t_path = os.path.dirname(__file__)
+
+    while project_root != t_path:
+        project_root = t_path
+        t_path = os.path.dirname(project_root)
+
+        manage = os.path.join(project_root, 'manage.py')
+        if os.path.exists(manage):
+            break
+
+    if t_path == project_root:
+        raise OSError("Unable to find project root")
+
+    return project_root
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -12,9 +30,9 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(get_project_root(), 'db.sqlite3'),              # Or path to database file if using sqlite3.
+        'USER': '',              # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
