@@ -16,6 +16,14 @@ cd myproject
 git remote rename origin baseline
 ```
 
+Create a virtual environment and populate it with the requirements:
+
+```
+virtualenv venv --distribute
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
 Next, generate a secret key for django to use for crypto functions:
 
 ```
@@ -46,14 +54,6 @@ heroku open
 
 Developing your app
 -------------------
-
-First, create a virtual environment and populate it with the requirements:
-
-```
-virtualenv venv --distribute
-source venv/bin/activate
-pip install -r requirements.txt
-```
 
 Create ```baseline/localsettings.py``` with ```DEBUG``` configured:
 
