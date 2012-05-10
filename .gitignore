@@ -5,3 +5,4 @@ db/
 localsettings.py
 /static
 venv
+db.sqlite3
