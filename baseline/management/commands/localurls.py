@@ -7,12 +7,26 @@ from django.core.management.base import BaseCommand
 
 import baseline
 
+from baseline.conf.settings.default import get_project_root
+from baseline.settings import warn
+
 LOCAL_URLS_PATH = os.path.join(os.path.dirname(baseline.__file__), 'localurls.py')
 
-TEMPLATE = """from django.conf.urls import patterns, include, url
+LOCALURLS_TEMPLATE = """from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'', include('{0}.urls')),
 )
+"""
+
+APP_URLS_TEMPLATE = """from django.conf.urls import patterns, include, url
+urlpatterns = patterns('{app}.views',
+    url(r'^$', 'home', name="{app}_home"),
+)
+"""
+
+HELLO_VIEW = """def home(request):
+    from django.shortcuts import render_to_response
+    return render_to_response('baseline/app_home.html', {})
 """
 
 class Command(BaseCommand):
@@ -36,11 +50,22 @@ class Command(BaseCommand):
         try:
             app = args[0]
         except IndexError:
-            from baseline.settings import warn
-
             self.print_help('manage.py', 'localurls')
             warn('App not given', color='red', name='Error', print_traceback=False, prefix='\n')
             sys.exit(1)
 
+        app_root = os.path.join(get_project_root(), app)
+        if not os.path.exists(app_root):
+
+            warn('App does not exist; create app using django-admin.py startapp {0}'.format(app),
+                 color='red', name='Error', print_traceback=False)
+            sys.exit(1)
+
         with open(LOCAL_URLS_PATH, 'wb') as f:
-            f.write(TEMPLATE.format(app))
+            f.write(LOCALURLS_TEMPLATE.format(app))
+
+        with open(os.path.join(app_root, 'urls.py'), 'wb') as f:
+            f.write(APP_URLS_TEMPLATE.format(app=app))
+
+        with open(os.path.join(app_root, 'views.py'), 'ab') as f:
+            f.write(HELLO_VIEW)
