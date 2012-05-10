@@ -1,11 +1,16 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 
+try:
+    from baseline.localurls import urlpatterns
+except ImportError:
+    urlpatterns = []
+
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns += patterns('',
     # Examples:
     url(r'^$', 'baseline.views.home', name='home'),
     url(r'^404/$', 'baseline.views.notfound', name='404'),
