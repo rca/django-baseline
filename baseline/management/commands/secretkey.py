@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 
 import baseline
 
-CHARS = string.ascii_letters + string.digits + string.punctuation
+CHARS = string.ascii_letters + string.digits + string.punctuation.replace('"', '')
 SECRET_KEY_PATH = os.path.join(os.path.dirname(baseline.__file__), 'secretkey.py')
 
 class Command(BaseCommand):
