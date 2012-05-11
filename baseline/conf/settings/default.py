@@ -4,7 +4,7 @@ from auth import *
 
 def get_project_root():
     project_root = None
-    t_path = os.path.dirname(__file__)
+    t_path = os.path.abspath(os.path.dirname(__file__))
 
     while project_root != t_path:
         project_root = t_path
