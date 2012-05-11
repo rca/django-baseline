@@ -6,47 +6,41 @@ Django Baseline is a ready-made Django project that helps you deploy to Heroku a
 Getting Started
 ---------------
 
-Clone this repo and point the remote to the name baseline.  Renaming the remote
-to baseline leaves origin open for your project and allows you to more easily
-pull in changes from baseline.
+Clone this repo with your desired project name:
 
 ```
 git clone git://github.com/rca/django-baseline.git myproject
 cd myproject
-git remote rename origin baseline
 ```
 
-Create a virtual environment and populate it with the requirements:
+Run the bootstrap script.  This script will rename the baseline remote repo to
+baseline so that origin is left open for your project.  It will also create a
+virtual environment in the ```venv``` directory, create a secret key file as a
+seed for Django's crypto functions, create a localsettings module, which
+enables debug, and sync databases for local development.
 
 ```
-virtualenv venv --distribute
-source venv/bin/activate
-pip install -r requirements.txt
+./bootstrap.sh
 ```
 
-Next, generate a secret key for django to use for crypto functions:
+Deploying to Heroku
+-------------------
 
-```
-python manage.py secretkey
-git add baseline/secretkey.py
-git commit -m'Added secret key module'
-```
-
-Then, initialize heroku in the project directory and push to Heroku:
+Initialize heroku in the project directory and push to Heroku:
 
 ```
 heroku create --stack cedar
 git push heroku master
 ```
 
-Once the application is running on Heroku, sync the database:
+Sync the database:
 
 ```
 heroku run python manage.py syncdb
 heroku run python manage.py migrate
 ```
 
-And finally, to see your application:
+And view your application:
 
 ```
 heroku open
@@ -55,42 +49,26 @@ heroku open
 Developing your app
 -------------------
 
-Create ```baseline/localsettings.py``` with ```DEBUG``` configured:
-
-```
-echo "DEBUG = True" >> baseline/localsettings.py
-```
-
-Sync the database:
-
-```
-python manage.py syncdb
-python manage.py migrate
-```
-
-Start your application and tie in its urls.  The localurls command creates
-```baseline/localurls.py``` that's automatically imported and ties in your
-application's ```urls.py``` file.
+Create your application:
 
 ```
 django-admin.py startapp myapp
 git add myapp
 git commit -m'Added django app, "myapp"'
-
-python manage.py localurls myapp
 ```
 
-Now run a server locally and access your site at http://localhost:8000/
+Tie in your app's urls module and commit:
+
+```
+python manage.py localurls myapp
+git add -A
+git commit -m'Added baseline-generated files'
+```
+
+Run your local server and access your site at http://localhost:8000/
 
 ```
 python manage.py runserver
-```
-
-This would be a good time to commit all the files the commands above generated:
-
-```
-git add -A
-git commit -m'Added baseline-generated configuration'
 ```
 
 Happy Hacking
