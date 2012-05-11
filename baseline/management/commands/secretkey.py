@@ -9,8 +9,11 @@ from django.utils.crypto import get_random_string
 
 import baseline
 
+from baseline.util import get_heroku_config, set_heroku_config
+
 CHARS = string.ascii_letters + string.digits + string.punctuation.replace('"', '')
-SECRET_KEY_PATH = os.path.join(os.path.dirname(baseline.__file__), 'secretkey.py')
+
+LOCALSETTINGS = os.path.join(os.path.dirname(baseline.__file__), 'localsettings.py')
 
 class Command(BaseCommand):
     args = ''
@@ -26,11 +29,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if os.path.exists(SECRET_KEY_PATH) and not options['force']:
-            print 'Secret key file already exists; use -f to regenerate'
+        heroku_config = get_heroku_config()
+
+        if 'DJANGO_SECRET_KEY' in heroku_config and not options['force']:
+            print 'Secret key already created; use -f to regenerate'
             sys.exit(0)
 
         random_string = get_random_string(50, CHARS)
 
-        with open(SECRET_KEY_PATH, 'wb') as f:
-            f.write('SECRET_KEY = "{0}"\n'.format(random_string))
+        set_heroku_config(DJANGO_SECRET_KEY=random_string)
+
+        with open(LOCALSETTINGS, 'ab') as f:
+            f.write('SECRET_KEY = {0!r}\n'.format(random_string))
