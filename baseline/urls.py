@@ -26,6 +26,7 @@ urlpatterns += patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     (r'^static/(.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 
-    url(r'^logout/', 'baseline.views.logout'),
+    url(r'^login/', 'baseline.views.login', name='login'),
+    url(r'^logout/', 'baseline.views.logout', name='logout'),
     url(r'', include('social_auth.urls')),
 )

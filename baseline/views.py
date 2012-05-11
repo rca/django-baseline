@@ -11,6 +11,11 @@ def home(request):
     return render_to_response('baseline/home.html', context,
                        context_instance=RequestContext(request))
 
+def login(request):
+    context = {}
+    return render_to_response('baseline/login.html', context,
+                       context_instance=RequestContext(request))
+
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/')
