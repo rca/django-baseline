@@ -15,6 +15,12 @@ def warn(message, color='yellow', name='Warning', prefix='', print_traceback=Tru
     sys.stderr.write('{0}{1}: {2}\n'.format(prefix, red(name), message))
 
 try:
+    from localapps import APPS
+    INSTALLED_APPS += APPS
+except ImportError:
+    pass
+
+try:
     from secretkey import SECRET_KEY
 except ImportError:
     warn('Please create a secret key by running: "manage.py secretkey"')
