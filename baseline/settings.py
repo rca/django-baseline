@@ -1,4 +1,4 @@
-import sys
+import os
 
 from conf.settings.default import *
 
@@ -31,3 +31,9 @@ try:
     from localsettings import *
 except ImportError:
     pass
+
+# create settings variables for any environment variable prefixed 'DJANGO_.*'
+for key in os.environ:
+    if key.startswith('DJANGO_'):
+        setting = '{0} = {1!r}'.format(key[7:], os.environ[key])
+        exec setting
