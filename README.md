@@ -57,10 +57,10 @@ git add myapp
 git commit -m'Added django app, "myapp"'
 ```
 
-Tie in your app's urls module and commit:
+Add your app, tie in its urls module, and commit:
 
 ```
-python manage.py localurls myapp
+python manage.py localapp myapp
 git add -A
 git commit -m'Added baseline-generated files'
 ```
