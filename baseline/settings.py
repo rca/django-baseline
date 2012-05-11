@@ -1,8 +1,9 @@
+from django.utils.importlib import import_module
 import os
 
 from baseline.util import warn
 
-from conf.settings.default import *
+from baseline.conf.settings.default import *
 
 try:
     from localapps import LOCAL_APPS
@@ -21,9 +22,20 @@ for key in os.environ:
         setting = '{0} = {1!r}'.format(key[7:], os.environ[key])
         exec setting
 
+# get settings from all local apps
+app_settings = {}
+for app in LOCAL_APPS:
+    try:
+        module = import_module('{0}.settings'.format(app))
+        for item in dir(module):
+            app_settings[item] = getattr(module, item)
+    except ImportError:
+        pass
+locals().update(app_settings)
+
 # anything in localsettings overrides the automatically included stuff above
 try:
-    from localsettings import *
+    from baseline.localsettings import *
 except ImportError:
     pass
 
