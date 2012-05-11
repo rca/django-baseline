@@ -71,6 +71,23 @@ Run your local server and access your site at http://localhost:8000/
 python manage.py runserver
 ```
 
+Application Settings
+--------------------
+
+The settings.py file in any apps listed in baseline/localapps.py will be added
+to the Django settings.  Any sensitive data, such as passwords, should not be
+kept in settings files that end up in the repository but rather in environment
+variables.  Setting up environment variables in heroku can be set using
+```heroku config```.  More information at
+https://devcenter.heroku.com/articles/config-vars
+
+Any environment variable that starts with ```DJANGO_``` will be automatically
+added to settings with the prefix removed.  For example, DJANGO_FOO will end up
+being FOO in Django's settings.
+
+For development, you can add these to your environment before running django,
+or add the variables to localsettings.py.
+
 Happy Hacking
 -------------
 
