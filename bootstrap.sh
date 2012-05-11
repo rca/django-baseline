@@ -24,7 +24,7 @@ fi;
 
 # create localsettings module
 if [ ! -e baseline/localsettings.py ]; then
-    echo "DEBUG = True" >> baseline/localsettings.py
+    echo 'from conf.settings.development import *' >> baseline/localsettings.py
 fi;
 
 # sync the local database
