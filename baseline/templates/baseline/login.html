@@ -1,0 +1,12 @@
+{% extends "baseline/base.html" %}
+
+{% block content %}
+<h1>Login</h1>
+
+<form name="login-form" method="post" action="{{ request.path }}">{% csrf_token %}
+    <table>
+        {{ form }}
+        <tr><td colspan="2"><input type="submit" value="login" /></td></tr>
+    </table>
+</form>
+{% endblock content %}
