@@ -1,5 +1,7 @@
 from subprocess import PIPE, Popen
 
+class HerokuError(Exception): pass
+
 def get_heroku_config():
     heroku_config = {}
 
@@ -13,12 +15,13 @@ def get_heroku_config():
 
 def set_heroku_config(**config):
     args = ['{0}={1}'.format(a, b) for a, b in config.items()]
+    command = ['heroku', 'config:add'] + args
 
-    heroku = Popen(['heroku', 'config:add'] + args, stdout=PIPE, stderr=PIPE)
+    heroku = Popen(command, stdout=PIPE, stderr=PIPE)
     stdout, stderr = heroku.communicate()
     status = heroku.wait()
     if status != 0:
-        raise Exception('Heroku config failed (stdout: {0}, stderr: {1})'.format(stdout, stderr))
+        raise HerokuError('Heroku config failed: {0} (stdout: {1}, stderr: {2})'.format(' '.join(command), stdout, stderr), ' '.join(command))
 
 def warn(message, color='yellow', name='Warning', prefix='', print_traceback=True):
     import sys
