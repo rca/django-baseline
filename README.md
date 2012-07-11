@@ -49,6 +49,12 @@ heroku open
 Developing your app
 -------------------
 
+First, activate your virtualenv:
+
+```
+. venv/bin/activate
+```
+
 Create your application:
 
 ```

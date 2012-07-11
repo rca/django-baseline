@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set +e
 
+LOCALSETTINGS=baseline/localsettings.py
+
+PIP=venv/bin/pip
+PYTHON=venv/bin/python
+
 # make sure we're in the project directory
 SCRIPT_DIR=$(dirname $0)
 cd "${SCRIPT_DIR}"
@@ -10,23 +15,22 @@ git remote -v | grep -q '^baseline' || git remote rename origin baseline;
 
 if [ ! -e venv ]; then
     virtualenv venv --distribute
-    venv/bin/pip install -r requirements.txt
-fi;
-
-# create the virtual environment and install requirements
-secret_key=baseline/secretkey.py
-if [ ! -e ${secret_key} ]; then
-    venv/bin/python manage.py secretkey;
-
-    git add ${secret_key}
-    git commit -m"Added ${secret_key}" ${secret_key}
+    ${PIP} install -r requirements.txt
 fi;
 
 # create localsettings module
-if [ ! -e baseline/localsettings.py ]; then
-    echo 'from conf.settings.development import *' >> baseline/localsettings.py
+if [ ! -e ${LOCALSETTINGS} ]; then
+    echo 'from conf.settings.development import *' >> ${LOCALSETTINGS}
+fi;
+
+# create the virtual environment and install requirements
+got_secret_key=$(grep SECRET_KEY ${LOCALSETTINGS})
+if [ "$?" -ne "0" ]; then
+    ${PYTHON} manage.py secretkey;
+else
+    echo "got secret"
 fi;
 
 # sync the local database
-python manage.py syncdb
-python manage.py migrate
+${PYTHON} manage.py syncdb
+${PYTHON} manage.py migrate

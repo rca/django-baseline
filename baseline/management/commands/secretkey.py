@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 
 import baseline
 
-from baseline.util import get_heroku_config, set_heroku_config
+from baseline.util import HerokuError, get_heroku_config, set_heroku_config, warn
 
 CHARS = string.ascii_letters + string.digits + string.punctuation.replace('"', '')
 
@@ -37,7 +37,11 @@ class Command(BaseCommand):
 
         random_string = get_random_string(50, CHARS)
 
-        set_heroku_config(DJANGO_SECRET_KEY=random_string)
-
         with open(LOCALSETTINGS, 'ab') as f:
             f.write('SECRET_KEY = {0!r}\n'.format(random_string))
+
+        try:
+            set_heroku_config(DJANGO_SECRET_KEY=random_string)
+        except HerokuError, msg:
+            message = 'Unable to set heroku config.  Make sure to run:\n  {0}'.format(msg[1])
+            warn(message, name='Warning')
