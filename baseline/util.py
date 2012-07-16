@@ -4,8 +4,16 @@ class HerokuError(Exception): pass
 
 def get_heroku_config():
     heroku_config = {}
+    command = ['heroku', 'config']
 
-    heroku = Popen(['heroku', 'config'], stdout=PIPE)
+    try:
+        heroku = Popen(command, stdout=PIPE)
+    except OSError, exc:
+        if exc[0] != 2:
+            raise
+
+        raise HerokuError('Heroku config failed: {0}'.format(exc), ' '.join(command))
+
     output = heroku.communicate()[0]
     for line in output.splitlines():
         k, v = line.strip().split('=>', 1)
@@ -17,7 +25,14 @@ def set_heroku_config(**config):
     args = ['{0}={1}'.format(a, b) for a, b in config.items()]
     command = ['heroku', 'config:add'] + args
 
-    heroku = Popen(command, stdout=PIPE, stderr=PIPE)
+    try:
+        heroku = Popen(command, stdout=PIPE, stderr=PIPE)
+    except OSError, exc:
+        if exc[0] != 2:
+            raise
+
+        raise HerokuError('Heroku config failed: {0}'.format(exc), ' '.join(command))
+
     stdout, stderr = heroku.communicate()
     status = heroku.wait()
     if status != 0:
