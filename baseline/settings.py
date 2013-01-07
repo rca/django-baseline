@@ -42,3 +42,9 @@ except ImportError:
 # check to see if there is a secret key set either in secretkey.py or environment
 if not SECRET_KEY:
     warn('Please create a secret key by running: "manage.py secretkey"')
+
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+dj_db_config = dj_database_url.config()
+if dj_db_config:
+    DATABASES['default'] =  dj_database_url.config()
