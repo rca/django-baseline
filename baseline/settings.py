@@ -45,4 +45,6 @@ if not SECRET_KEY:
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+dj_db_config = dj_database_url.config()
+if dj_db_config:
+    DATABASES['default'] =  dj_database_url.config()
