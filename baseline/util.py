@@ -28,7 +28,7 @@ def get_heroku_config():
     return heroku_config
 
 def set_heroku_config(**config):
-    args = ['{0}={1}'.format(a, b) for a, b in config.items()]
+    args = ['{0}={1!r}'.format(a, b) for a, b in config.items()]
     command = ['heroku', 'config:add'] + args
 
     try:
