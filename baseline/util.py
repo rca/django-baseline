@@ -1,6 +1,11 @@
+import re
+
 from subprocess import PIPE, Popen
 
-class HerokuError(Exception): pass
+HEROKU_CONFIG_RE = re.compile(r'(?P<key>[^:]*):\s+(?P<value>.*)')
+
+class HerokuError(Exception):
+    pass
 
 def get_heroku_config():
     heroku_config = {}
@@ -16,13 +21,14 @@ def get_heroku_config():
 
     output = heroku.communicate()[0]
     for line in output.splitlines():
-        k, v = line.strip().split('=>', 1)
-        heroku_config[k.strip()] = v.strip()
+        matches = HEROKU_CONFIG_RE.match(line)
+        if matches:
+            heroku_config[matches.group('key')] = matches.group('value')
 
     return heroku_config
 
 def set_heroku_config(**config):
-    args = ['{0}={1}'.format(a, b) for a, b in config.items()]
+    args = ['{0}={1!r}'.format(a, b) for a, b in config.items()]
     command = ['heroku', 'config:add'] + args
 
     try:

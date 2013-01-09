@@ -31,12 +31,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             heroku_config = get_heroku_config()
-
-            if 'DJANGO_SECRET_KEY' in heroku_config and not options['force']:
-                print 'Secret key already created; use -f to regenerate'
-                sys.exit(0)
         except HerokuError:
-            pass
+            heroku_config = {}
 
         # check to see if the secret key is already set
         try:
@@ -49,7 +45,8 @@ class Command(BaseCommand):
             print exc
             pass
 
-        random_string = get_random_string(50, CHARS)
+        random_string = heroku_config.get('DJANGO_SECRET_KEY', None) or \
+                get_random_string(50, CHARS)
 
         with open(LOCALSETTINGS, 'ab') as f:
             f.write('SECRET_KEY = {0!r}\n'.format(random_string))
