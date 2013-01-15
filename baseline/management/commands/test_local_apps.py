@@ -8,8 +8,8 @@ except ImportError:
 class Command(TestCommand):
     def handle(self, *test_labels, **options):
         try:
-            if not test_labels and hasattr(settings, 'MY_APPS'):
-                test_labels += settings.MY_APPS
+            if not test_labels and hasattr(settings, 'LOCAL_APPS'):
+                test_labels += settings.LOCAL_APPS
                 print '!! only testing %s !!' % (' '.join(test_labels),)
         except: pass
 
