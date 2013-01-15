@@ -128,10 +128,6 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-MY_APPS = (
-    'baseline',
-)
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -148,7 +144,8 @@ INSTALLED_APPS = (
     'gunicorn',
     'social_auth',
     'tastypie',
-) + MY_APPS
+    'baseline',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
