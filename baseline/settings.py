@@ -9,7 +9,7 @@ from baseline.conf.settings.default import *
 SECRET_KEY = None
 
 try:
-    from localapps import LOCAL_APPS
+    from local_apps import LOCAL_APPS
     INSTALLED_APPS += LOCAL_APPS
 except ImportError:
     LOCAL_APPS = ()
