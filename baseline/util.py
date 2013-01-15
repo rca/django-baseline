@@ -7,6 +7,30 @@ HEROKU_CONFIG_RE = re.compile(r'(?P<key>[^:]*):\s+(?P<value>.*)')
 class HerokuError(Exception):
     pass
 
+def convert_bool(value):
+    """
+    Returns the value as a boolean if appropriate
+
+    The value is converted into a boolean if possible. The value will be
+    returned unmodified if no suitable conversion found.
+    """
+    if value in ('yes', 'true', 'True'):
+        value = True
+    elif value in ('no', 'false', 'False'):
+        value = False
+
+    return value
+
+def convert_int(value):
+    """
+    Return the value as an integer if it looks like a number. The value will be
+    returned unmodified if no suitable conversion found.
+    """
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
 def get_heroku_config():
     heroku_config = {}
     command = ['heroku', 'config']
