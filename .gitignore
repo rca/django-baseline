@@ -1,6 +1,7 @@
 .idea
 .sass-cache
 *.py[co]
+/.env
 db/
 localsettings.py
 /static
