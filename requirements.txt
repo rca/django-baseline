@@ -1,11 +1,11 @@
-Django==1.4.3
-django-social-auth==0.6.8
+django-social-auth==0.7.17
 gunicorn==0.14.2
 mock==0.8.0
 psycopg2==2.4.6
 simplejson==2.1.6
-South==0.7.4
+South==0.7.6
 dj-database-url==0.2.1
 
+-e git://github.com/django/django.git@1.5b2#egg=Django
 
 # Add your requirements after this line
