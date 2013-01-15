@@ -143,7 +143,6 @@ INSTALLED_APPS = (
     'south',
     'gunicorn',
     'social_auth',
-    'tastypie',
     'baseline',
 )
 
