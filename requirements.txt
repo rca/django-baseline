@@ -5,6 +5,9 @@ psycopg2==2.4.6
 simplejson==2.1.6
 South==0.7.6
 dj-database-url==0.2.1
+django-compressor==1.2
+pyScss==1.1.4
+pyScss.py==1.0
 
 -e git://github.com/django/django.git@1.5b2#egg=Django
 
