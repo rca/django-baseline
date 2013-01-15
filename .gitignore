@@ -2,6 +2,7 @@
 .sass-cache
 *.py[co]
 /.env
+/build
 db/
 localsettings.py
 /static
