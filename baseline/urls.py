@@ -1,14 +1,18 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-
-try:
-    from baseline.localurls import urlpatterns
-except ImportError:
-    urlpatterns = []
+from django.utils.importlib import import_module
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
+
+urlpatterns = []
+for app in settings.LOCAL_APPS:
+    try:
+        module = import_module('{0}.urls'.format(app))
+        urlpatterns += module.urlpatterns
+    except ImportError:
+        pass
 
 urlpatterns += patterns('',
     # Examples:

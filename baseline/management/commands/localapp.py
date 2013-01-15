@@ -10,20 +10,7 @@ import baseline
 from baseline.conf.settings.default import get_project_root
 from baseline.settings import warn
 
-LOCAL_APPS_PATH = os.path.join(os.path.dirname(baseline.__file__), 'localapps.py')
-LOCAL_URLS_PATH = os.path.join(os.path.dirname(baseline.__file__), 'localurls.py')
-
-LOCALURLS_TEMPLATE = """from django.conf.urls import patterns, include, url
-urlpatterns = patterns('',
-    url(r'', include('{0}.urls')),
-)
-"""
-
-APP_URLS_TEMPLATE = """from django.conf.urls import patterns, include, url
-urlpatterns = patterns('{app}.views',
-    url(r'^$', 'home', name="{app}_home"),
-)
-"""
+LOCAL_APPS_PATH = os.path.join(os.path.dirname(baseline.__file__), 'local_apps.py')
 
 LOCALAPPS_TEMPLATE = """# auto-generated file by manage.py localapp
 LOCAL_APPS = {LOCAL_APPS}
@@ -36,7 +23,7 @@ HELLO_VIEW = """def home(request):
 
 class Command(BaseCommand):
     args = 'app'
-    help = "Add local application to project.  First app will have its URLs automatically included."
+    help = "Add local application to project."
 
     can_import_settings = False
 
@@ -64,17 +51,6 @@ class Command(BaseCommand):
                 t_content = f.read()
 
                 exec t_content # redefines LOCAL_APPS to contain existing apps.
-        elif os.path.exists(app_root): # project's first app, tie in its urls.
-            with open(LOCAL_URLS_PATH, 'wb') as f:
-                f.write(LOCALURLS_TEMPLATE.format(app))
-
-            with open(os.path.join(app_root, 'urls.py'), 'wb') as f:
-                f.write(APP_URLS_TEMPLATE.format(app=app))
-
-            # create a stub view; use append to not accidentally blow away
-            # user-generated views.
-            with open(os.path.join(app_root, 'views.py'), 'ab') as f:
-                f.write(HELLO_VIEW)
 
         # add this app to LOCAL_APPS
         LOCAL_APPS += (app,)
