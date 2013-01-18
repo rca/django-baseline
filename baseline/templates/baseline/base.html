@@ -7,12 +7,12 @@
         {% block css %}<link type="text/css" rel="stylesheet" href="{% static "stylesheets/bootstrap.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "stylesheets/baseline.css" %}" />{% endblock %}
         {% block javascripts_pre %}{% endblock %}{% block default_javascripts %}{% if debug %}
-        <script type="text/javascript" src="{% static "javascripts/jquery-1.7.1.js" %}"></script>
+        <script type="text/javascript" src="{% static "javascripts/jquery-1.8.3.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/underscore.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/backbone.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/bootstrap.js" %}"></script>
         {% else %}
-        <script type="text/javascript" src="{% static "javascripts/jquery-1.7.1.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "javascripts/jquery-1.8.3.min.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/underscore-min.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/backbone-min.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/bootstrap.min.js" %}"></script>
