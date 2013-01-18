@@ -1,6 +1,10 @@
 # Django settings for baseline project.
 import os
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+
 from auth import *
+
 
 def get_project_root():
     project_root = None
@@ -105,6 +109,10 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django.core.context_processors.request',
 )
 
 MIDDLEWARE_CLASSES = (
