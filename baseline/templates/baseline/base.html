@@ -17,7 +17,9 @@
         <script type="text/javascript" src="{% static "javascripts/backbone-min.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/bootstrap.min.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/ajax_setup.js" %}"></script>
-        {% endif %}{% endblock default_javascripts %}{% block javascripts %}{% endblock %}
+        {% endif %}
+        <script type="text/javascript" src="{% static "javascripts/ajax_setup.js" %}"></script>
+        {% endblock default_javascripts %}{% block javascripts %}{% endblock %}
     </head>
     <body>{% block body %}{% block start_of_body %}{% endblock %}
         <div id="page" class="container">{% block page %}{% block start_of_page %}{% endblock %}
