@@ -2,7 +2,10 @@ import re
 
 from subprocess import PIPE, Popen
 
+from django.utils import six
+
 HEROKU_CONFIG_RE = re.compile(r'(?P<key>[^:]*):\s+(?P<value>.*)')
+
 
 class HerokuError(Exception):
     pass
@@ -30,6 +33,33 @@ def convert_int(value):
         return int(value)
     except ValueError:
         return value
+
+def convert_sequence(value):
+    if not isinstance(value, six.string_types):
+        return value
+
+    new_value = value
+    first = value[0]
+    last = value[-1]
+
+    # check to see if the string uses parens or square brackets as leading
+    # and trailing characters
+    if first in ('(', '[') and last in (')', ']'):
+        new_value = []
+        for item in value[1:-1].split(','):
+            item = item.strip()
+            if item[0] in ('"', "'"):
+                item = item[1:]
+            if item[-1] in ('"', "'"):
+                item = item[:-1]
+
+            new_value.append(item)
+
+    # if the leading character is a paren, convert to tuple
+    if first == '(':
+        new_value = tuple(new_value)
+
+    return new_value
 
 def get_heroku_config():
     heroku_config = {}
