@@ -48,6 +48,12 @@ def convert_sequence(value):
         new_value = []
         for item in value[1:-1].split(','):
             item = item.strip()
+
+            # single-item tuples have a trailing comma, which would lead to an
+            # empty item
+            if item == '':
+                continue
+
             if item[0] in ('"', "'"):
                 item = item[1:]
             if item[-1] in ('"', "'"):
