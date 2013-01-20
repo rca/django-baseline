@@ -1,7 +1,7 @@
 from django.utils.importlib import import_module
 import os
 
-from baseline.util import convert_bool, convert_int, warn
+from baseline.util import convert_bool, convert_int, convert_sequence, warn
 
 from baseline.conf.settings.default import *
 
@@ -45,6 +45,8 @@ for key in os.environ:
         value = convert_int(value)
         # truthy/falsy values second
         value = convert_bool(value)
+        # value = convert sequences like lists and tuples
+        value = convert_sequence(value)
 
         _locals[key[len(prefix):]] = value
 
