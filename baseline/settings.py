@@ -36,6 +36,9 @@ for key in os.environ:
     _locals = locals()
 
     if key.startswith(prefix):
+        if key == 'DJANGO_SETTINGS_MODULE':
+            continue
+
         value = os.environ[key]
 
         # int first
