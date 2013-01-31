@@ -39,6 +39,7 @@ for key in os.environ:
         if key == 'DJANGO_SETTINGS_MODULE':
             continue
 
+        new_key = key[len(prefix):]
         value = os.environ[key]
 
         # int first
@@ -48,7 +49,7 @@ for key in os.environ:
         # value = convert sequences like lists and tuples
         value = convert_sequence(value)
 
-        _locals[key[len(prefix):]] = value
+        _locals[new_key] = value
 
 # check to see if there is a secret key set
 try:
