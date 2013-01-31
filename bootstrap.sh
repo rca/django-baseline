@@ -23,6 +23,11 @@ echo "Baseline Bootstrap v1.0"
 echo "-----------------------"
 echo
 
+# move origin over to baseline
+set +e
+git remote -v | grep -q '^baseline' || git remote rename origin baseline;
+set -e
+
 if [ "$1" == "-h" -o "$1" == "help" -o "$1" == "-?" ]; then
 	echo "When run without any arguments, this script sets up the chefpa project"
 	echo "for running using a virtualenv in the current working directory."
