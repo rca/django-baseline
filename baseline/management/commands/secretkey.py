@@ -13,7 +13,7 @@ from baseline.util import HerokuError, get_heroku_config, set_heroku_config, war
 
 CHARS = string.ascii_letters + string.digits + string.punctuation.replace('"', '')
 
-LOCALSETTINGS = os.path.join(os.path.dirname(baseline.__file__), 'localsettings.py')
+LOCALSETTINGS = os.path.join(os.path.dirname(baseline.__file__), 'local_settings.py')
 
 class Command(BaseCommand):
     args = ''
@@ -36,9 +36,9 @@ class Command(BaseCommand):
 
         # check to see if the secret key is already set
         try:
-            from baseline import localsettings
+            from baseline import local_settings
 
-            if hasattr(localsettings, 'SECRET_KEY') and not options['force']:
+            if hasattr(local_settings, 'SECRET_KEY') and not options['force']:
                 print 'Secret key already created; use -f to regenerate'
                 sys.exit(0)
         except ImportError, exc:
