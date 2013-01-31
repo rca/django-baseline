@@ -5,9 +5,6 @@ from baseline.util import convert_bool, convert_int, convert_sequence, warn
 
 from baseline.conf.settings.default import *
 
-# stub in SECRET_KEY and see if it's set by bringing in environment variables
-SECRET_KEY = None
-
 try:
     from local_apps import LOCAL_APPS
     INSTALLED_APPS += LOCAL_APPS
@@ -50,6 +47,9 @@ for key in os.environ:
 
         _locals[key[len(prefix):]] = value
 
-# check to see if there is a secret key set either in secretkey.py or environment
-if not SECRET_KEY:
-    warn('Please create a secret key by running: "manage.py secretkey"')
+# check to see if there is a secret key set
+try:
+    SECRET_KEY
+except:
+    warn(('Django 1.5 will not run without a SECRET_KEY.  In your environment:'
+          'export DJANGO_SECRET_KEY=<some random string>'))
