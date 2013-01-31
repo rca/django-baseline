@@ -11,6 +11,19 @@ PROJECT="baseline"
 LOCALSETTINGS="$PROJECT/local_settings.py"
 
 VENV="venv"
+VIRTUALENVS=${HOME}/.virtualenvs
+
+currdir=$(basename $(pwd));
+virtualenv_dir=${VIRTUALENVS}/${currdir}
+
+# check to see if virtualenv is installed, create a virtualenv there instead of
+# within the project directory
+if [ -e ${virtualenv_dir} ]; then
+    VENV=${virtualenv_dir}
+fi;
+
+echo "VENV: $VENV"
+
 PIP="$VENV/bin/pip"
 PYTHON="$VENV/bin/python"
 ACTIVATE="$VENV/bin/activate"
