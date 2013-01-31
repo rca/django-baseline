@@ -1,7 +1,7 @@
 # Django settings for baseline project.
 import os
 
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+from django.conf.global_settings import STATICFILES_FINDERS, TEMPLATE_CONTEXT_PROCESSORS
 
 from auth import *
 
@@ -115,6 +115,10 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
 )
 
+STATICFILES_FINDERS += (
+    'compressor.finders.CompressorFinder',
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -152,6 +156,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'social_auth',
     'baseline',
+    'compressor',
 )
 
 # A sample logging configuration. The only tangible logging
