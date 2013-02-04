@@ -5,7 +5,7 @@ SCRIPT_DIR=$(dirname $0)
 [ "${SCRIPT_DIR}" == "." ] && SCRIPT_DIR=$(pwd)
 
 # make sure we're in the project directory
-cd "${SCRIPT_DIR}"
+cd "${SCRIPT_DIR}/.."
 
 PROJECT="baseline"
 LOCALSETTINGS="$PROJECT/local_settings.py"
