@@ -1,31 +1,18 @@
-{% load staticfiles %}<!DOCTYPE html>
+{% load compress %}{% load staticfiles %}<!DOCTYPE html>
 <html lang="en">
     <head>
         <title>{% block title %}Baseline{% endblock %}</title>
-        {% block css_pre %}{% endblock %}
-        <link type="text/css" rel="stylesheet" href="{% static "stylesheets/reset.css" %}" />
-        {% block css %}<link type="text/css" rel="stylesheet" href="{% static "stylesheets/bootstrap.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "stylesheets/baseline.css" %}" />{% endblock %}
-        {% block javascripts_pre %}{% endblock %}{% block default_javascripts %}{% if debug %}
-        <script type="text/javascript" src="{% static "javascripts/jquery-1.8.3.js" %}"></script>
+        {% block stylesheets %}{% compress css %}<link type="text/css" rel="stylesheet" href="{% static "stylesheets/bootstrap.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "stylesheets/baseline.css" %}" />{% endcompress %}{% endblock %}
+        {% block javascripts %}{% compress js %}<script type="text/javascript" src="{% static "javascripts/jquery-1.8.3.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/underscore.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/backbone.js" %}"></script>
         <script type="text/javascript" src="{% static "javascripts/bootstrap.js" %}"></script>
-        {% else %}
-        <script type="text/javascript" src="{% static "javascripts/jquery-1.8.3.min.js" %}"></script>
-        <script type="text/javascript" src="{% static "javascripts/underscore-min.js" %}"></script>
-        <script type="text/javascript" src="{% static "javascripts/backbone-min.js" %}"></script>
-        <script type="text/javascript" src="{% static "javascripts/bootstrap.min.js" %}"></script>
-        <script type="text/javascript" src="{% static "javascripts/ajax_setup.js" %}"></script>
-        {% endif %}
-        <script type="text/javascript" src="{% static "javascripts/ajax_setup.js" %}"></script>
-        {% endblock default_javascripts %}{% block javascripts %}{% endblock %}
+        <script type="text/javascript" src="{% static "javascripts/ajax_setup.js" %}"></script>{% endcompress %}{% endblock %}
     </head>
-    <body>{% block body %}{% block start_of_body %}{% endblock %}
-        <div id="page" class="container">{% block page %}{% block start_of_page %}{% endblock %}
+    <body>{% block body %}
+        <div id="page" class="container">{% block page %}
             <div id="content">{% block content %}{% endblock %}</div><!-- #content -->
-            {% block end_of_page %}{% endblock %}
         {% endblock page %}</div><!-- #page -->
-        {% block end_of_body %}{% endblock %}
     {% endblock body %}</body>
 </html>
