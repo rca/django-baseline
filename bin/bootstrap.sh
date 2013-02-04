@@ -18,7 +18,7 @@ virtualenv_dir=${VIRTUALENVS}/${currdir}
 
 # check to see if virtualenv is installed, create a virtualenv there instead of
 # within the project directory
-if [ -e ${virtualenv_dir} ]; then
+if [ -e ${VIRTUALENVS} ]; then
     VENV=${virtualenv_dir}
 fi;
 
