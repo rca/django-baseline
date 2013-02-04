@@ -7,7 +7,7 @@ from baseline.conf.settings.default import *
 
 try:
     from local_apps import LOCAL_APPS
-    INSTALLED_APPS += LOCAL_APPS
+    INSTALLED_APPS = LOCAL_APPS + INSTALLED_APPS
 except ImportError:
     LOCAL_APPS = ()
     pass
