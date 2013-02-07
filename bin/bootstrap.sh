@@ -8,7 +8,6 @@ SCRIPT_DIR=$(dirname $0)
 cd "${SCRIPT_DIR}/.."
 
 PROJECT="baseline"
-LOCALSETTINGS="$PROJECT/local_settings.py"
 
 VENV="venv"
 VIRTUALENVS=${HOME}/.virtualenvs
@@ -87,7 +86,6 @@ if [ "$1" == "superclean" ]; then
     if [ -z ${NOINPUT} ]; then
         echo "Files to delete:"
         [ -e "$DEV_DB" ]        && echo "    rm -rf $DEV_DB"
-        [ -e "$LOCALSETTINGS" ] && echo "    rm -rf $LOCALSETTINGS"
         [ -e "$VENV" ]          && echo "    rm -rf $VENV/"
         echo
         find_pyc | sed 's/^/    /'
@@ -104,7 +102,6 @@ if [ "$1" == "superclean" ]; then
 
 		[ -e "$DEV_DB" ]        && rm -rf "$DEV_DB"        && echo -n "."
 		[ -e "$VENV" ]          && rm -rf "$VENV/"         && echo -n "."
-		[ -e "$LOCALSETTINGS" ] && rm -rf "$LOCALSETTINGS" && echo -n "."
         find_pyc | xargs rm -f
 		echo ".done"
 	else
@@ -120,18 +117,6 @@ fi;
 
 # install requirements, always install in order to update an existing venv
 ${PIP} install -r requirements.txt
-
-# create localsettings module
-if [ ! -e ${LOCALSETTINGS} ]; then
-	echo 'from conf.settings.development import *' >> ${LOCALSETTINGS}
-fi;
-
-got_secret_key=$(grep SECRET_KEY ${LOCALSETTINGS})
-if [ "$?" -ne "0" ]; then
-	${PYTHON} manage.py secretkey
-else
-	echo "Got SECRET_KEY"
-fi;
 
 if [ ! -z ${NOINPUT} ]; then
     manage_args="--noinput"
