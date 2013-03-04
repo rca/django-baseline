@@ -6,8 +6,10 @@ from baseline.util import convert_bool, convert_int, convert_sequence, warn
 from baseline.conf.settings.default import *
 
 try:
-    from local_apps import LOCAL_APPS
-    INSTALLED_APPS = LOCAL_APPS + INSTALLED_APPS
+    import local_apps
+
+    LOCAL_APPS = local_apps.LOCAL_APPS
+    INSTALLED_APPS = LOCAL_APPS + INSTALLED_APPS + getattr(local_apps, 'INSTALLED_APPS', ())
 except ImportError:
     LOCAL_APPS = ()
     pass
