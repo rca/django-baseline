@@ -6,6 +6,7 @@ from django.utils.importlib import import_module
 # from django.contrib import admin
 # admin.autodiscover()
 
+fallback_urlpatterns = []
 urlpatterns = []
 for app in settings.LOCAL_APPS:
     try:
@@ -13,6 +14,13 @@ for app in settings.LOCAL_APPS:
         urlpatterns += module.urlpatterns
     except ImportError:
         pass
+
+    try:
+        module = import_module('{0}.fallback_urls'.format(app))
+        fallback_urlpatterns = module.urlpatterns + fallback_urlpatterns
+    except ImportError:
+        pass
+
 
 urlpatterns += patterns('',
     # Examples:
@@ -33,4 +41,4 @@ urlpatterns += patterns('',
     url(r'^login/?$', 'django.contrib.auth.views.login', {'template_name': 'baseline/login.html'}, name='login'),
     url(r'^logout/?$', 'django.contrib.auth.views.logout', name='logout'),
     url(r'', include('social_auth.urls')),
-)
+) + fallback_urlpatterns
