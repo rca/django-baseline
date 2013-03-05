@@ -24,15 +24,18 @@ def preview(request, template):
 
 
 def static_page(request):
-    # strip off leading slash
-    template = request.path[1:]
+    if request.path == '/':
+        template = 'index.html'
+    else:
+        # strip off leading slash
+        template = request.path[1:]
 
-    # strip off trailing slash if it's there
-    if template[-1] == '/':
-        template = template[:-1]
+        # strip off trailing slash if it's there
+        if template[-1] == '/':
+            template = template[:-1]
 
-    # if there is no extension, append .html
-    if '.' not in template:
-        template += '.html'
+        # if there is no extension, append .html
+        if '.' not in template:
+            template += '.html'
 
     return render_to_response(template)
