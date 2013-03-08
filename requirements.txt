@@ -1,6 +1,6 @@
 django==1.5
 django-social-auth==0.7.17
-gunicorn==0.14.2
+gunicorn==0.17.2
 mock==0.8.0
 psycopg2==2.4.6
 simplejson==2.1.6
