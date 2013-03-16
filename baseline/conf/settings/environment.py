@@ -1,5 +1,6 @@
 import os
 
+from baseline.conf.settings.default import DATABASES
 from baseline.util import convert_bool, convert_int, convert_sequence, warn
 
 
