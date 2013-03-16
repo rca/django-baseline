@@ -6,20 +6,15 @@ from django.utils.importlib import import_module
 # from django.contrib import admin
 # admin.autodiscover()
 
-fallback_urlpatterns = []
-urlpatterns = []
-for app in settings.LOCAL_APPS:
-    try:
-        module = import_module('{0}.urls'.format(app))
-        urlpatterns += module.urlpatterns
-    except ImportError:
-        pass
+try:
+    from baseline.local_urls import urlpatterns
+except ImportError:
+    urlpatterns = []
 
-    try:
-        module = import_module('{0}.fallback_urls'.format(app))
-        fallback_urlpatterns = module.urlpatterns + fallback_urlpatterns
-    except ImportError:
-        pass
+try:
+    from baseline.local_urls import fallback_urlpatterns
+except ImportError:
+    fallback_urlpatterns = []
 
 
 urlpatterns += patterns('',
