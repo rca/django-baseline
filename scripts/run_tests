@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR=$(dirname $0)
+PYTHON=${PYTHON:-python}
 
 # make sure we are at the project root
 cd ${SCRIPT_DIR}/..
@@ -11,4 +12,4 @@ cd ${SCRIPT_DIR}/..
 # set a secret key
 export DJANGO_SECRET_KEY=django_test_run
 
-exec venv/bin/python manage.py test_my_apps
+exec ${PYTHON} manage.py test_my_apps
