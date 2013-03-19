@@ -112,7 +112,7 @@ fi
 
 # create the virtual environment
 if [ ! -e "$VENV" ]; then
-	virtualenv "$VENV" --distribute
+    virtualenv "$VENV" --distribute
 fi;
 
 # install requirements, always install in order to update an existing venv
