@@ -41,7 +41,7 @@ git remote -v | grep -q '^baseline' || git remote rename origin baseline;
 set -e
 
 if [ "$1" == "-h" -o "$1" == "help" -o "$1" == "-?" ]; then
-	echo "When run without any arguments, this script sets up the chefpa project"
+	echo "When run without any arguments, this script sets up the project"
 	echo "for running using a virtualenv in the current working directory."
 	echo
 	echo "The NOINPUT environment variable can be set to '1' (anything not "
@@ -125,8 +125,8 @@ else
 fi;
 
 # sync the local database
-${PYTHON} manage.py syncdb $manage_args
-${PYTHON} manage.py migrate $manage_args
+DJANGO_SECRET_KEY=bootstrap ${PYTHON} manage.py syncdb $manage_args
+DJANGO_SECRET_KEY=bootstrap ${PYTHON} manage.py migrate $manage_args
 
 echo
 echo "--------------------------------------------"
