@@ -1,3 +1,5 @@
+import os
+
 from django.utils import six
 
 
@@ -59,6 +61,24 @@ def convert_sequence(value):
         new_value = tuple(new_value)
 
     return new_value
+
+
+def get_project_root():
+    """
+    Look for the nearest .git directory
+    """
+
+    last_dir = None
+    curr_dir = os.path.dirname(__file__)
+
+    while last_dir != curr_dir:
+        manage_py = os.path.join(curr_dir, 'manage.py')
+        if os.path.exists(manage_py):
+            return curr_dir
+
+        curr_dir = os.path.dirname(curr_dir)
+
+    raise Exception('project root not found')
 
 
 def warn(message, color='yellow', name='Warning', prefix='', print_traceback=True):

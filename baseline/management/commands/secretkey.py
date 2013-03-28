@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 import string
 
 from optparse import make_option
@@ -8,30 +7,12 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 from django.utils.crypto import get_random_string
 
-import baseline
+from baseline.util import get_project_root
 
 CHARS = string.ascii_letters + string.digits + string.punctuation.replace("'", '')
 ENV_RE = re.compile(r"export (?P<key>.*)=[\"']?(?P<value>.*)[\"']?")
 ENV_FILE = '.env'
 SECRET_KEY_NAME = 'DJANGO_SECRET_KEY'
-
-
-def get_project_root():
-    """
-    Look for the nearest .git directory
-    """
-
-    last_dir = None
-    curr_dir = os.path.dirname(__file__)
-
-    while last_dir != curr_dir:
-        dot_git = os.path.join(curr_dir, '.git')
-        if os.path.exists(dot_git):
-            return curr_dir
-
-        curr_dir = os.path.dirname(curr_dir)
-
-    raise Exception('project root not found')
 
 
 class Command(BaseCommand):
