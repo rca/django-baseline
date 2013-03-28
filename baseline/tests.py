@@ -14,11 +14,11 @@ def find_test_modules(module_path):
         if not (filename.startswith('test_') and filename.endswith('.py')):
             continue
 
-        project_parent_dir = os.path.dirname(get_project_root())
+        project_root = get_project_root()
 
         module_name = filename.replace('.py', '')
         module_path = '{0}.{1}'.format(
-            module_dir.replace(project_parent_dir, ''), module_name).replace('/', '.')[1:]
+            module_dir.replace(project_root, ''), module_name).replace('/', '.')[1:]
 
         module = import_module(module_path)
 
