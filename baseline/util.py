@@ -1,7 +1,6 @@
 from django.utils import six
 
 
-
 def convert_bool(value):
     """
     Returns the value as a boolean if appropriate
