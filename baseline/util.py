@@ -1,14 +1,4 @@
-import re
-
-from subprocess import PIPE, Popen
-
 from django.utils import six
-
-HEROKU_CONFIG_RE = re.compile(r'(?P<key>[^:]*):\s+(?P<value>.*)')
-
-
-class HerokuError(Exception):
-    pass
 
 
 def convert_bool(value):
