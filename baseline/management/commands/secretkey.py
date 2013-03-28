@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import string
 
@@ -9,11 +10,29 @@ from django.utils.crypto import get_random_string
 
 import baseline
 
-from baseline.util import HerokuError, get_heroku_config, set_heroku_config, warn
+CHARS = string.ascii_letters + string.digits + string.punctuation.replace("'", '')
+ENV_RE = re.compile(r"export (?P<key>.*)=[\"']?(?P<value>.*)[\"']?")
+ENV_FILE = '.env'
+SECRET_KEY_NAME = 'DJANGO_SECRET_KEY'
 
-CHARS = string.ascii_letters + string.digits + string.punctuation.replace('"', '')
 
-LOCALSETTINGS = os.path.join(os.path.dirname(baseline.__file__), 'local_settings.py')
+def get_project_root():
+    """
+    Look for the nearest .git directory
+    """
+
+    last_dir = None
+    curr_dir = os.path.dirname(__file__)
+
+    while last_dir != curr_dir:
+        dot_git = os.path.join(curr_dir, '.git')
+        if os.path.exists(dot_git):
+            return curr_dir
+
+        curr_dir = os.path.dirname(curr_dir)
+
+    raise Exception('project root not found')
+
 
 class Command(BaseCommand):
     args = ''
@@ -28,31 +47,38 @@ class Command(BaseCommand):
             make_option('-f', '--force', action='store_true', help='Regenerate secret key'),
         )
 
+    @property
+    def env_path(self):
+        project_root = get_project_root()        
+        return os.path.join(project_root, ENV_FILE)
+
+    def read_env_file(self):
+        env = {}
+
+        if not os.path.exists(self.env_path):
+            return env
+
+        with open(self.env_path, 'rb') as env_fh:
+            while True:
+                line = env_fh.readline()
+                if line == '':
+                    break
+
+                line = line.strip()
+                matches = ENV_RE.match(line)
+                if matches:
+                    env[matches.group('key')] = matches.group('value')
+
+        return env
+
     def handle(self, *args, **options):
-        try:
-            heroku_config = get_heroku_config()
-        except HerokuError:
-            heroku_config = {}
+        env = self.read_env_file()
 
-        # check to see if the secret key is already set
-        try:
-            from baseline import local_settings
+        if SECRET_KEY_NAME not in env:
+            random_string = get_random_string(50, CHARS)
+            line = "export {0}='{1}'\n".format(SECRET_KEY_NAME, random_string)
 
-            if hasattr(local_settings, 'SECRET_KEY') and not options['force']:
-                print 'Secret key already created; use -f to regenerate'
-                sys.exit(0)
-        except ImportError, exc:
-            print exc
-            pass
+            with open(self.env_path, 'ab') as env_fh:
+                env_fh.write(line)
 
-        random_string = heroku_config.get('DJANGO_SECRET_KEY', None) or \
-                get_random_string(50, CHARS)
-
-        with open(LOCALSETTINGS, 'ab') as f:
-            f.write('SECRET_KEY = {0!r}\n'.format(random_string))
-
-        try:
-            set_heroku_config(DJANGO_SECRET_KEY=random_string)
-        except HerokuError, msg:
-            message = 'Unable to set heroku config.  Make sure to run:\n  {0}'.format(msg[1])
-            warn(message, name='Warning')
+        print "You're all set, make sure you run: 'source {}'".format(self.env_path)
