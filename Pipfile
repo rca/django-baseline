@@ -3,20 +3,17 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
 
 [packages]
-django-social-auth = "==0.7.17"
-gunicorn = "==0.17.2"
-mock = "==0.8.0"
-psycopg2 = "==2.4.6"
-simplejson = "==2.1.6"
-dj-database-url = "==0.2.1"
-django-compressor = "==1.2"
-Django = "==1.5"
-South = "==0.7.6"
-pyScss = "==1.1.4"
-"pyScss.py" = "==1.0"
+django-social-auth = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
+dj-database-url = "*"
+Django = "*"
+
+
+[dev-packages]
+
 
 [requires]
 python_version = "3.6"
