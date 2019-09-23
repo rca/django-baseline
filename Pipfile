@@ -5,11 +5,23 @@ verify_ssl = true
 
 
 [packages]
+conversion = "*"
+dj-database-url = "*"
+django = "*"
+django-extensions = "*"
+django-fsm = "*"
+django-guardian = "*"
+django-model-utils = "*"
+django-redis = "*"
+django-simple-history = "*"
 django-social-auth = "*"
+djangorestframework = "*"
+gevent = "*"
+greenlet = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
-dj-database-url = "*"
-Django = "*"
+redis = "*"
+whitenoise = "*"
 
 
 [dev-packages]
