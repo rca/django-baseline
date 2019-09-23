@@ -1,0 +1,4 @@
+services:
+  app:
+    ports:
+      - ${SERVICE_PORT}:8000

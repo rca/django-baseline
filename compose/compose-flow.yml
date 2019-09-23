@@ -1,0 +1,4 @@
+profiles:
+  local:
+    - docker-compose.yml
+    - local
