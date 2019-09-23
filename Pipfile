@@ -3,7 +3,6 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-
 [packages]
 conversion = "*"
 dj-database-url = "*"
@@ -23,9 +22,8 @@ psycopg2-binary = "*"
 redis = "*"
 whitenoise = "*"
 
-
 [dev-packages]
-
+compose-flow = "*"
 
 [requires]
 python_version = "3.6"
