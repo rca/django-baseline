@@ -18,7 +18,6 @@ djangorestframework = "*"
 gevent = "*"
 greenlet = "*"
 gunicorn = "*"
-psycopg2-binary = "*"
 redis = "*"
 whitenoise = "*"
 
