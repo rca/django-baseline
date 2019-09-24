@@ -2,3 +2,6 @@ services:
   app:
     ports:
       - ${SERVICE_PORT}:8000
+    working_dir: /opt/project/src
+    volumes:
+      - ..:/opt/project
