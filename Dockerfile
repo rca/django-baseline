@@ -5,6 +5,10 @@ RUN apt-get update && \
   apt-get install -q -y build-essential libssl-dev libpq-dev && \
   pip install pipenv psycopg2cffi
 
+# link pypy3 to python and python3 executables
+RUN update-alternatives --install /usr/local/bin/python python /usr/local/bin/pypy3 100 && \
+  update-alternatives --install /usr/local/bin/python3 python3 /usr/local/bin/pypy3 100
+
 ENV SRC_DIR /usr/local/src/django-baseline
 ENV APP_DIR ${SRC_DIR}/src
 
