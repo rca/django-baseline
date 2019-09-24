@@ -1,8 +1,9 @@
 FROM pypy:3.6-slim-stretch
 MAINTAINER Roberto Aguilar <r@rreboto.com>
 
-RUN apt-get install -q -y build-essential libssl-dev libpq-dev \
-  && pip install pipenv psycopg2cffi
+RUN apt-get update && \
+  apt-get install -q -y build-essential libssl-dev libpq-dev && \
+  pip install pipenv psycopg2cffi
 
 ENV SRC_DIR /usr/local/src/django-baseline
 ENV APP_DIR ${SRC_DIR}/src
