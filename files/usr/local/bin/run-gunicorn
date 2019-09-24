@@ -2,7 +2,7 @@
 set -e
 set -x
 
-WSGI_MODULE=${WSGI_MODULE:-webapp.wsgi}
+WSGI_MODULE=${WSGI_MODULE:-webproject.wsgi}
 
 
 exec gunicorn \
