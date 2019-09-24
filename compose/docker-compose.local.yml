@@ -1,5 +1,7 @@
 services:
   app:
+    environment:
+      - DJANGO_SECRET_KEY=local
     ports:
       - ${SERVICE_PORT}:8000
     working_dir: /opt/project/src
