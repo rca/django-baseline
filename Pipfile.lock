@@ -18,10 +18,10 @@
     "default": {
         "conversion": {
             "hashes": [
-                "sha256:7e25c662af2003b3af7ccc14d6462608a152c8486677635bb5a03aa5801c11a5"
+                "sha256:fb19c55e082ed9f3173cee5fff195196806f98d086b7d018c9d02bdcb068b845"
             ],
             "index": "pypi",
-            "version": "==0.0.4"
+            "version": "==0.0.6"
         },
         "dj-database-url": {
             "hashes": [
