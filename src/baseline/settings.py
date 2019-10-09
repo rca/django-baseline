@@ -30,7 +30,10 @@ DEBUG = convert_bool(os.environ.get("DJANGO_DEBUG", "False"))
 
 ALLOWED_HOSTS = convert_list(os.environ.get("DJANGO_ALLOWED_HOSTS", ""))
 
+# pypy compatibility
+from psycopg2cffi import compat
 
+compat.register()
 
 # Application definition
 
