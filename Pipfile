@@ -3,17 +3,25 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-
 [packages]
-django-social-auth = "*"
-gunicorn = "*"
-psycopg2-binary = "*"
+conversion = "*"
 dj-database-url = "*"
-Django = "*"
-
+django = "*"
+django-extensions = "*"
+django-fsm = "*"
+django-guardian = "*"
+django-model-utils = "*"
+django-redis = "*"
+django-simple-history = "*"
+django-social-auth = "*"
+djangorestframework = "*"
+gevent = "*"
+gunicorn = "*"
+redis = "*"
+whitenoise = "*"
 
 [dev-packages]
-
+compose-flow = "*"
 
 [requires]
 python_version = "3.6"

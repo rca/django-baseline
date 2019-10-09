@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+set -x
+
+WSGI_MODULE=${WSGI_MODULE:-webproject.wsgi}
+
+
+exec gunicorn \
+  --worker-class gevent \
+  --timeout 10 \
+  --workers 3 \
+  -b 0.0.0.0:8000 \
+  ${WSGI_MODULE}
