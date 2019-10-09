@@ -2,3 +2,9 @@ profiles:
   local:
     - docker-compose.yml
     - local
+    - postgres
+
+
+tasks:
+  bootstrap:
+    command: compose-flow compose run --rm app bash -x ../scripts/bootstrap.sh
