@@ -3,9 +3,13 @@
 import os
 import sys
 
+SETTINGS_ENV_VAR = "DJANGO_SETTINGS_MODULE"
+
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webproject.settings")
+    if SETTINGS_ENV_VAR not in os.environ:
+        raise EnvironmentError(f"{SETTINGS_ENV_VAR} is required in environment")
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
