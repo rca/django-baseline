@@ -15,13 +15,13 @@ django-redis = "*"
 django-simple-history = "*"
 django-social-auth = "*"
 djangorestframework = "*"
-gevent = "*"
 gunicorn = "*"
 redis = "*"
 whitenoise = "*"
 
 [dev-packages]
 compose-flow = "*"
+gevent = "*"
 
 [requires]
 python_version = "3.6"

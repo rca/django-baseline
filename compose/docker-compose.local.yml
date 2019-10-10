@@ -11,3 +11,8 @@ services:
     working_dir: /opt/project/src
     volumes:
       - ..:/opt/project
+
+  builder:
+    build:
+      context: ..
+      target: builder
