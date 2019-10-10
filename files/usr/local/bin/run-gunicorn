@@ -1,13 +1,11 @@
-#!/bin/bash
-set -e
-set -x
+#!/usr/bin/env python
+import os
+import shlex
 
-WSGI_MODULE=${WSGI_MODULE:-webproject.wsgi}
+SETTINGS_MODULE = os.environ["DJANGO_SETTINGS_MODULE"]
+PROJECT_PACKAGE = SETTINGS_MODULE.split(".", 1)[0]
+WSGI_MODULE = f"{PROJECT_PACKAGE}.wsgi"
 
+args = shlex.split(f"gunicorn --worker-class gevent --timeout 10 --workers 3 --bind 0.0.0.0:8000 {WSGI_MODULE}")
 
-exec gunicorn \
-  --worker-class gevent \
-  --timeout 10 \
-  --workers 3 \
-  -b 0.0.0.0:8000 \
-  ${WSGI_MODULE}
+os.execlp(args[0], *args)
