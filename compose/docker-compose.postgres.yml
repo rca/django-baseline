@@ -8,9 +8,9 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=local
-      - POSTGRES_USER=local
-      - POSTGRES_PASSWORD=local
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
 
 
 volumes:

@@ -6,5 +6,5 @@ services:
       args:
         - VERSION
     environment:
-      - DJANGO_SETTINGS_MODULE=blwebproject.settings
+      - DJANGO_SETTINGS_MODULE
     image: ${DOCKER_IMAGE}
