@@ -20,7 +20,6 @@ redis = "*"
 whitenoise = "*"
 
 [dev-packages]
-compose-flow = "*"
 gevent = "*"
 
 [requires]
