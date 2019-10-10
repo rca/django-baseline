@@ -1,9 +1,9 @@
-FROM pypy:3.6-slim-stretch
+FROM pypy:3.6-slim-stretch AS base
 MAINTAINER Roberto Aguilar <r@rreboto.com>
 
 RUN apt-get update && \
-  apt-get install -q -y build-essential libssl-dev libpq-dev && \
-  pip install pipenv psycopg2cffi
+  apt-get install -q -y libpq5 && \
+  pip install pipenv
 
 # link pypy3 to python and python3 executables
 RUN update-alternatives --install /usr/local/bin/python python /usr/local/bin/pypy3 100 && \
@@ -17,6 +17,27 @@ COPY Pipfile Pipfile.lock ${SRC_DIR}/
 WORKDIR ${SRC_DIR}
 
 RUN pipenv install --system --deploy --clear
+
+
+FROM base AS builder
+
+# install packages needed for builder
+# as well as for CFFI version of psycopg2
+RUN apt-get update && \
+  apt-get install -q -y build-essential libssl-dev libpq-dev rsync && \
+  pip install psycopg2cffi
+
+WORKDIR ${SRC_DIR}
+
+RUN pipenv install --system --deploy --dev --clear
+
+RUN mkdir -p /var/lib/baseline
+RUN rsync -a --include='gevent**' --include='psycopg2cffi**' --exclude='**' /usr/local/site-packages/ /var/lib/baseline/cffi_packages/
+
+
+FROM base AS app
+
+COPY --from=builder /var/lib/baseline/cffi_packages/ /usr/local/site-packages/
 
 COPY files/ /
 RUN chmod +x /usr/local/bin/*
