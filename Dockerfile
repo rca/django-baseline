@@ -1,4 +1,4 @@
-FROM pypy:3.6-slim-stretch AS base
+FROM pypy:3.8-slim-bullseye AS base
 MAINTAINER Roberto Aguilar <r@rreboto.com>
 
 RUN apt-get update && \
@@ -32,12 +32,12 @@ WORKDIR ${SRC_DIR}
 RUN pipenv install --system --deploy --dev --clear
 
 RUN mkdir -p /var/lib/baseline
-RUN rsync -a --include='gevent**' --include='psycopg2cffi**' --exclude='**' /usr/local/site-packages/ /var/lib/baseline/cffi_packages/
+RUN rsync -a --include='gevent**' --include='psycopg2cffi**' --exclude='**' /opt/pypy/lib/pypy3.8/site-packages/ /var/lib/baseline/cffi_packages/
 
 
 FROM base AS app
 
-COPY --from=builder /var/lib/baseline/cffi_packages/ /usr/local/site-packages/
+COPY --from=builder /var/lib/baseline/cffi_packages/ /opt/pypy/lib/pypy3.8/site-packages/
 
 COPY files/ /
 RUN chmod +x /usr/local/bin/*
