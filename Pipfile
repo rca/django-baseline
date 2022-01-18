@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
+"backports.zoneinfo" = "*"
 conversion = "*"
 dj-database-url = "*"
 django = "*"
@@ -21,6 +22,3 @@ whitenoise = "*"
 
 [dev-packages]
 gevent = "*"
-
-[requires]
-python_version = "3.6"
