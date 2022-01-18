@@ -3,13 +3,10 @@
 import os
 import sys
 
-SETTINGS_ENV_VAR = "DJANGO_SETTINGS_MODULE"
-
 
 def main():
-    if SETTINGS_ENV_VAR not in os.environ:
-        raise EnvironmentError(f"{SETTINGS_ENV_VAR} is required in environment")
-
+    """Run administrative tasks."""
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webplatform.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -21,5 +18,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
