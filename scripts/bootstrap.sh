@@ -67,5 +67,4 @@ fi;
 
 # sync the local database
 cd src
-python manage.py syncdb $manage_args
 python manage.py migrate $manage_args
