@@ -28,7 +28,6 @@ whitenoise = "*"
 
 [dev-packages]
 black = "*"
-gevent = "*"
 mock = "*"
 pytest-django = "*"
 
