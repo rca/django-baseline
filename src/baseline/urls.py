@@ -15,5 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
+
+
+class PrefixBasenameSimpleRouter(routers.SimpleRouter):
+    def register(self, prefix, viewset, basename=None):
+        basename = basename or prefix
+
+        super().register(prefix, viewset, basename)
+
 
 urlpatterns = [path("admin/", admin.site.urls)]
