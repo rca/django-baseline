@@ -1,0 +1,11 @@
+services:
+  app:
+    depends_on:
+      - redis
+
+  builder:
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2-bullseye

@@ -3,6 +3,7 @@ profiles:
     - docker-compose.yml
     - local
     - postgres
+    - redis
 
 
 tasks:
