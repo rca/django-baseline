@@ -17,6 +17,7 @@ django-simple-history = "*"
 django-social-auth = "*"
 djangorestframework = "*"
 gunicorn = "*"
+python-dateutil = "*"
 redis = "*"
 whitenoise = "*"
 
