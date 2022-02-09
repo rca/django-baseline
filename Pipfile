@@ -23,10 +23,11 @@ python-dateutil = "*"
 redis = "*"
 requests = "*"
 whitenoise = "*"
+"zope.interface" = "*"
+"zope.event" = "*"
 
 [dev-packages]
 black = "*"
-gevent = "*"
 mock = "*"
 pytest-django = "*"
 
