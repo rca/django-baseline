@@ -8,6 +8,7 @@ class NamedModel(models.Model):
     """
     Model that provides a name to a model
     """
+
     name = models.CharField(max_length=256)
 
     class Meta:
