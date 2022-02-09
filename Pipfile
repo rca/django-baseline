@@ -5,6 +5,7 @@ verify_ssl = true
 
 [packages]
 "backports.zoneinfo" = "*"
+celery = "*"
 conversion = "*"
 dj-database-url = "*"
 django = "*"
