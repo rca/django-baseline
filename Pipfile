@@ -16,8 +16,11 @@ django-redis = "*"
 django-simple-history = "*"
 django-social-auth = "*"
 djangorestframework = "*"
+gevent = "*"
 gunicorn = "*"
+python-dateutil = "*"
 redis = "*"
+requests = "*"
 whitenoise = "*"
 
 [dev-packages]
