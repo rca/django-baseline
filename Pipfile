@@ -21,4 +21,10 @@ redis = "*"
 whitenoise = "*"
 
 [dev-packages]
+black = "*"
 gevent = "*"
+mock = "*"
+pytest-django = "*"
+
+[pipenv]
+allow_prereleases = true
