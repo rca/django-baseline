@@ -20,6 +20,7 @@ gevent = "*"
 gunicorn = "*"
 python-dateutil = "*"
 redis = "*"
+requests = "*"
 whitenoise = "*"
 
 [dev-packages]
