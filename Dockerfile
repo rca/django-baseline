@@ -1,9 +1,9 @@
 FROM python:3.8-slim-bullseye AS base
 MAINTAINER Roberto Aguilar <r@rreboto.com>
 
-RUN apt-get update && \
-  apt-get install -q -y libpq5 && \
-  pip install pipenv
+RUN apt-get update \
+  && apt-get install -q -y libpq5 \
+  && pip install pipenv
 
 RUN pip install psycopg2-binary
 
