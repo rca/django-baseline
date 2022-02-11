@@ -6,6 +6,7 @@ services:
       - DJANGO_ALLOWED_HOSTS=*
       - DJANGO_DEBUG=true
       - DJANGO_SECRET_KEY=local
+      - DJANGO_SETTINGS_MODULE=bltestproject.settings
     ports:
       - ${SERVICE_PORT}:8000
     working_dir: /opt/project/src
