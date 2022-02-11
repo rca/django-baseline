@@ -16,3 +16,11 @@ services:
     build:
       context: ..
       target: builder
+    environment:
+      - DATABASE_URL=postgres://local:local@postgres/local
+      - DJANGO_ALLOWED_HOSTS=*
+      - DJANGO_DEBUG=true
+      - DJANGO_SECRET_KEY=local
+    working_dir: /opt/project/src
+    volumes:
+      - ..:/opt/project
