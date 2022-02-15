@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-import os
-
 from pathlib import Path
 
+import conversion
 import dj_database_url
 
-from conversion import convert_bool, convert_list
+from .utils import get_setting
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,16 +24,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = get_setting("DJANGO_SECRET_KEY", maintenance_default="super-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = convert_bool(os.environ.get("DJANGO_DEBUG", "False"))
+DEBUG = conversion.convert_bool(get_setting("DJANGO_DEBUG", default="False"))
 
-ALLOWED_HOSTS = convert_list(os.environ.get("DJANGO_ALLOWED_HOSTS", ""))
+ALLOWED_HOSTS = conversion.convert_list(
+    get_setting("DJANGO_ALLOWED_HOSTS", default="", maintenance_default="*")
+)
 
 
 # pypy compatibility
-PYPY_ENABLE_COMPAT = convert_bool(os.environ.get("PYPY_ENABLE_COMPAT", "false"))
+PYPY_ENABLE_COMPAT = conversion.convert_bool(
+    get_setting("PYPY_ENABLE_COMPAT", default="false")
+)
 if PYPY_ENABLE_COMPAT:
     from psycopg2cffi import compat
 
@@ -51,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "rest_framework",
+    "baseline",
     "roles",
 ]
 
