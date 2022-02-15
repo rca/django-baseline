@@ -56,6 +56,9 @@ class EnvironmentSetting:
         self.name = name
         self.required = required
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.name}>"
+
     @property
     def attributes(self) -> dict:
         """
@@ -103,7 +106,7 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         required: bool = True,
         **kwargs,
     ):
-        self.maintenance_default = maintenance_default
+        self.maintenance_default = maintenance_default or self.default_value
 
         super().__init__(
             name,
@@ -124,10 +127,15 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         return attributes
 
     def get(self):
-        if self.is_test and self.default is None:
-            self.default = self.maintenance_default or self.default_value
+        try:
+            value = super().get()
+        except KeyError:
+            if self.is_test:
+                value = self.maintenance_default
+            else:
+                raise
 
-        return super().get()
+        return value
 
     @property
     def is_test(self):
@@ -150,6 +158,8 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
                 )
             )
         ):
+            is_test = True
+        elif "pytest" in sys.argv[0]:
             is_test = True
         elif tests.IS_PYTEST_RUNNING:
             is_test = True
