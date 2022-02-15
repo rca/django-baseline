@@ -69,7 +69,20 @@ def test_test_default_in_test_mode_with_test_override():
     """
     barfoo = "BARFOO"
     setting = MaintenanceEnvironmentSetting(
-        TEST_ENVIRONMENT_VARIABLE_NAME, test_default=barfoo
+        TEST_ENVIRONMENT_VARIABLE_NAME, maintenance_default=barfoo
     )
 
     assert setting.get() == barfoo
+
+
+def test_environment_setting_catalog():
+    """
+    Ensure settings that come from the environment are cataloged in a single call
+    """
+    from baseline.environment import get_catalog
+
+    settings = get_catalog()
+
+    assert isinstance(settings, dict)
+
+    assert len(settings) > 0
