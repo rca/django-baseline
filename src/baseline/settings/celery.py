@@ -1,8 +1,8 @@
 """
 Celery settings module
 """
-import os
+from .utils import get_setting
 
 # Celery settings
-CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
-CELERY_RESULT_BACKEND = os.environ["CELERY_RESULT_BACKEND"]
+CELERY_BROKER_URL = get_setting("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = get_setting("CELERY_RESULT_BACKEND")

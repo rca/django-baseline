@@ -1,0 +1,1 @@
+IS_PYTEST_RUNNING = False
