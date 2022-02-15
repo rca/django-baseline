@@ -146,6 +146,7 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
                     "collectstatic",
                     "makemigrations",
                     "migrate",
+                    "show_environment_settings",
                 )
             )
         ):
