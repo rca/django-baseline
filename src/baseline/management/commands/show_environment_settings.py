@@ -27,7 +27,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        export = "export " if options['export'] else ""
+        export = "export " if options["export"] else ""
 
         catalog = get_catalog()
         for k in sorted(catalog):
