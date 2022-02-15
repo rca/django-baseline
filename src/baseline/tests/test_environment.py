@@ -30,7 +30,7 @@ def test_test_default_in_normal_mode_with_test_override(monkeypatch):
     )
 
     setting = MaintenanceEnvironmentSetting(
-        TEST_ENVIRONMENT_VARIABLE_NAME, test_default=barfoo
+        TEST_ENVIRONMENT_VARIABLE_NAME, maintenance_default=barfoo
     )
 
     with pytest.raises(KeyError):
@@ -48,7 +48,7 @@ def test_test_default_in_normal_mode_with_test_override_and_default(monkeypatch)
     )
 
     setting = MaintenanceEnvironmentSetting(
-        TEST_ENVIRONMENT_VARIABLE_NAME, default=barfoo, test_default=barfoo * 2
+        TEST_ENVIRONMENT_VARIABLE_NAME, default=barfoo, maintenance_default=barfoo * 2
     )
 
     assert barfoo == setting.get()

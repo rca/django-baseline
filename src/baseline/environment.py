@@ -51,11 +51,11 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         name: str,
         *args,
         default: Any = None,
-        test_default: Any = None,
+        maintenance_default: Any = None,
         required: bool = True,
         **kwargs,
     ):
-        self.test_default = test_default
+        self.maintenance_default = maintenance_default
 
         super().__init__(
             name,
@@ -67,7 +67,7 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
 
     def get(self):
         if self.is_test and self.default is None:
-            self.default = self.test_default or self.default_value
+            self.default = self.maintenance_default or self.default_value
 
         return super().get()
 

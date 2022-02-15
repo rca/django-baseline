@@ -24,12 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_setting("DJANGO_SECRET_KEY")
+SECRET_KEY = get_setting("DJANGO_SECRET_KEY", maintenance_default="super-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = conversion.convert_bool(get_setting("DJANGO_DEBUG", default="False"))
 
-ALLOWED_HOSTS = conversion.convert_list(get_setting("DJANGO_ALLOWED_HOSTS", default=""))
+ALLOWED_HOSTS = conversion.convert_list(
+    get_setting("DJANGO_ALLOWED_HOSTS", default="", maintenance_default="*")
+)
 
 
 # pypy compatibility
