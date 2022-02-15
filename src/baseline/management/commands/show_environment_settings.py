@@ -18,7 +18,17 @@ class Command(BaseCommand):
             help="include additional attributes for each setting as a comment",
         )
 
+        parser.add_argument(
+            "--export",
+            dest="export",
+            action="store_true",
+            default=False,
+            help="prepend export to each setting to make it easier to eval into an environment",
+        )
+
     def handle(self, *args, **options):
+        export = "export " if options['export'] else ""
+
         catalog = get_catalog()
         for k in sorted(catalog):
             item = catalog[k]
@@ -33,4 +43,4 @@ class Command(BaseCommand):
                     ]
                 )
 
-            print(f"{k}={item}{attributes_s}")
+            print(f"{export}{k}={item}{attributes_s}")
