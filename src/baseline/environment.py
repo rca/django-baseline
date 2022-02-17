@@ -47,10 +47,8 @@ class EnvironmentSetting:
     def __init__(
         self,
         name: str,
-        *args,
         default: Any = None,
         required: bool = True,
-        **kwargs,
     ):
         self.default = default
         self.name = name
@@ -100,20 +98,16 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
     def __init__(
         self,
         name: str,
-        *args,
         default: Any = None,
         maintenance_default: Any = None,
         required: bool = True,
-        **kwargs,
     ):
         self.maintenance_default = maintenance_default or self.default_value
 
         super().__init__(
             name,
-            *args,
             default=default,
             required=required,
-            **kwargs,
         )
 
     @property
