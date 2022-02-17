@@ -1,12 +1,6 @@
 services:
   app:
     command: python manage.py runserver 0.0.0.0:8000
-    environment:
-      - DATABASE_URL=postgres://local:local@postgres/local
-      - DJANGO_ALLOWED_HOSTS=*
-      - DJANGO_DEBUG=true
-      - DJANGO_SECRET_KEY=local
-      - DJANGO_SETTINGS_MODULE=bltestproject.settings
     ports:
       - ${SERVICE_PORT}:8000
     working_dir: /opt/project/src
@@ -17,11 +11,8 @@ services:
     build:
       context: ..
       target: builder
-    environment:
-      - DATABASE_URL=postgres://local:local@postgres/local
-      - DJANGO_ALLOWED_HOSTS=*
-      - DJANGO_DEBUG=true
-      - DJANGO_SECRET_KEY=local
+    env_file:
+      - env.svc.app
     working_dir: /opt/project/src
     volumes:
       - ..:/opt/project

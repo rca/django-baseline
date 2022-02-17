@@ -5,6 +5,6 @@ services:
       context: ..
       args:
         - VERSION
-    environment:
-      - DJANGO_SETTINGS_MODULE
+    env_file:
+      - env.svc.app
     image: ${DOCKER_IMAGE}
