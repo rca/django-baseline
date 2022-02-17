@@ -19,7 +19,7 @@ def get_catalog():
     return catalog
 
 
-def get_setting(setting_cls, name: str, *args, **kwargs) -> Any:
+def get_setting(setting_cls, name: str, *args, **kwargs) -> str:
     """
     Returns a setting using the given settings class
 
