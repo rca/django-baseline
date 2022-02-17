@@ -16,6 +16,8 @@ WORKDIR ${SRC_DIR}
 
 RUN pipenv install --system --deploy --clear
 
+COPY files/ /
+RUN chmod +x /usr/local/bin/*
 
 FROM base AS builder
 
@@ -23,9 +25,6 @@ RUN pipenv install --system --deploy --dev --clear
 
 
 FROM base AS app
-
-COPY files/ /
-RUN chmod +x /usr/local/bin/*
 
 COPY src/ ${APP_DIR}/
 
