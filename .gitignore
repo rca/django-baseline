@@ -10,3 +10,5 @@ localsettings.py
 /static
 venv
 db.sqlite3
+
+compose/env.*

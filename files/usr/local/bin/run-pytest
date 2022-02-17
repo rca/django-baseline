@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+set -x
+
+default_database_port=5432
+
+# get the database url from the environment
+# the sed command expects the DATABASE_URL to be in the format
+# postgres://host or
+# postgres://host/db or
+# postgres://host:port/db or
+# postgres://user:pass@host/db or
+# postgres://user:pass@host:port/db
+# first removes the scheme: postgres://user:pass@host:port/db -> user:pass@host:port/db
+# then, removes the db: user:pass@host:port/db -> user:pass@host:port
+# then, removes the user info: user:pass@host:port -> host:port
+database=$(echo "${DATABASE_URL}" \
+  | sed -e 's|.*//\(.*\)|\1|' -e 's|\(.*\)/.*|\1|' -e 's|.*@||')
+
+# add a port if the database url did not contain one
+echo "${database}" | grep -q ':' || database="${database}:${default_database_port}"
+
+echo "database=${database}"
+
+# wait for the database to be available
+/usr/local/bin/wait-for-it.sh "${database}"
+
+exec pytest "$@"

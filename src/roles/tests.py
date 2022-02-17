@@ -14,7 +14,7 @@ def test_role_gets_all_perms(db):
     content_type = ContentType.objects.get_for_model(Permission)
     permission = Permission.objects.create(name="can-buy", content_type=content_type)
 
-    group, _ = Group.objects.get_or_create(name="buyer")
+    group, _ = Group.objects.get_or_create(name="test-buyer")
     group.permissions.add(permission)
 
     role = Role.objects.create(name="test", groups=[group])
@@ -22,11 +22,11 @@ def test_role_gets_all_perms(db):
     assert 1 == role.groups.count()
 
     # check to see that all the permissions from the groups associated to the role are in the role itself
-    assert 1 == role.permissions.count()
+    assert 1 == role.permissions.count(), role.permissions.all()
 
     assert permission == role.permissions.get()
 
     # ensure that removing the permission syncs properly
     group.permissions.remove(permission)
 
-    assert 0 == role.permissions.count()
+    assert 0 == role.permissions.count(), role.permissions.all()
