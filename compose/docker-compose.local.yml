@@ -11,6 +11,8 @@ services:
     build:
       context: ..
       target: builder
+    depends_on:
+      - postgres
     env_file:
       - env.svc.app
     working_dir: /opt/project/src
