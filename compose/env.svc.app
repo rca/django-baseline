@@ -1,3 +1,5 @@
+# add project-specific variables here
+# baseline variables below; do not edit
 CELERY_BROKER_URL
 CELERY_RESULT_BACKEND
 DATABASE_URL
