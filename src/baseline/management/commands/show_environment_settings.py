@@ -43,4 +43,4 @@ class Command(BaseCommand):
                     ]
                 )
 
-            print(f"{export}{k}={item}{attributes_s}")
+            print(f"{export}{k}={str(item)!r}{attributes_s}")

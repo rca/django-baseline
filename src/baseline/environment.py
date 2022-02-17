@@ -3,7 +3,7 @@ import typing
 
 from dataclasses import dataclass
 
-from . import tests
+from .settings.utils import is_maintenance
 
 Any = typing.Any
 Callable = typing.Callable
@@ -19,7 +19,7 @@ def get_catalog():
     return catalog
 
 
-def get_setting(setting_cls, name: str, *args, **kwargs) -> Any:
+def get_setting(setting_cls, name: str, *args, **kwargs) -> str:
     """
     Returns a setting using the given settings class
 
@@ -47,10 +47,8 @@ class EnvironmentSetting:
     def __init__(
         self,
         name: str,
-        *args,
         default: Any = None,
         required: bool = True,
-        **kwargs,
     ):
         self.default = default
         self.name = name
@@ -100,20 +98,16 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
     def __init__(
         self,
         name: str,
-        *args,
         default: Any = None,
         maintenance_default: Any = None,
         required: bool = True,
-        **kwargs,
     ):
         self.maintenance_default = maintenance_default or self.default_value
 
         super().__init__(
             name,
-            *args,
             default=default,
             required=required,
-            **kwargs,
         )
 
     @property
@@ -130,41 +124,12 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         try:
             value = super().get()
         except KeyError:
-            if self.is_test:
+            if is_maintenance():
                 value = self.maintenance_default
             else:
                 raise
 
         return value
-
-    @property
-    def is_test(self):
-        """
-        Returns whether the current process is a test run
-        """
-        import sys
-
-        is_test = False
-        if sys.argv[0].endswith("manage.py") and (
-            len(sys.argv) == 1
-            or (
-                len(sys.argv) > 1
-                and sys.argv[1]
-                in (
-                    "collectstatic",
-                    "makemigrations",
-                    "migrate",
-                    "show_environment_settings",
-                )
-            )
-        ):
-            is_test = True
-        elif "pytest" in sys.argv[0]:
-            is_test = True
-        elif tests.IS_PYTEST_RUNNING:
-            is_test = True
-
-        return is_test
 
 
 @dataclass

@@ -6,28 +6,26 @@ from baseline.environment import MaintenanceEnvironmentSetting
 TEST_ENVIRONMENT_VARIABLE_NAME = "TEST_ENV_ONE_TWO_THREE"
 
 
-def test_test_default_in_normal_mode(monkeypatch):
+@pytest.fixture()
+def disable_maintenance(monkeypatch):
+    monkeypatch.setattr("baseline.environment.is_maintenance", lambda: False)
+
+
+def test_test_default_in_normal_mode(disable_maintenance):
     """
     Ensure getting the value blows up when not in test mode
     """
-    monkeypatch.setattr(
-        MaintenanceEnvironmentSetting, "is_test", property(lambda self: False)
-    )
     setting = MaintenanceEnvironmentSetting(TEST_ENVIRONMENT_VARIABLE_NAME)
 
     with pytest.raises(KeyError):
         setting.get()
 
 
-def test_test_default_in_normal_mode_with_test_override(monkeypatch):
+def test_test_default_in_normal_mode_with_test_override(disable_maintenance):
     """
     Ensure the test value is returned in test mode
     """
     barfoo = "BARFOO"
-
-    monkeypatch.setattr(
-        MaintenanceEnvironmentSetting, "is_test", property(lambda self: False)
-    )
 
     setting = MaintenanceEnvironmentSetting(
         TEST_ENVIRONMENT_VARIABLE_NAME, maintenance_default=barfoo
@@ -37,15 +35,13 @@ def test_test_default_in_normal_mode_with_test_override(monkeypatch):
         setting.get()
 
 
-def test_test_default_in_normal_mode_with_test_override_and_default(monkeypatch):
+def test_test_default_in_normal_mode_with_test_override_and_default(
+    disable_maintenance,
+):
     """
     Ensure the test value is returned in test mode
     """
     barfoo = "BARFOO"
-
-    monkeypatch.setattr(
-        MaintenanceEnvironmentSetting, "is_test", property(lambda self: False)
-    )
 
     setting = MaintenanceEnvironmentSetting(
         TEST_ENVIRONMENT_VARIABLE_NAME, default=barfoo, maintenance_default=barfoo * 2

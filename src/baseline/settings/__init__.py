@@ -91,7 +91,8 @@ WSGI_APPLICATION = "webproject.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-database = dj_database_url.config()
+DATABASE_URL = get_setting("DATABASE_URL")
+database = dj_database_url.config(default=DATABASE_URL)
 if not database:
     raise ValueError("no database found")
 
