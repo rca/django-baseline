@@ -11,6 +11,8 @@ services:
     build:
       context: ..
       target: builder
+    command:
+      - run-pytest
     depends_on:
       - postgres
     env_file:
