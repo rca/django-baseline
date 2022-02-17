@@ -1,8 +1,20 @@
-import functools
+def get_setting(*args, **kwargs) -> str:
+    """
+    Returns the value for the given setting
 
-from ..environment import MaintenanceEnvironmentSetting, get_setting as base_get_setting
+    Args:
+        *args: args to be passed to the setting class
+        **kwargs: kwargs to be passed to the setting class
 
-get_setting = functools.partial(base_get_setting, MaintenanceEnvironmentSetting)
+    Returns:
+        str: the setting's value
+    """
+    from ..environment import (
+        MaintenanceEnvironmentSetting,
+        get_setting as base_get_setting,
+    )
+
+    return base_get_setting(MaintenanceEnvironmentSetting, *args, **kwargs)
 
 
 def is_maintenance() -> bool:
