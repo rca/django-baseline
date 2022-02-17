@@ -3,10 +3,6 @@ services:
     depends_on:
       - postgres
 
-  builder:
-    depends_on:
-      - postgres
-
   postgres:
     image: postgres:12-alpine
     volumes:
