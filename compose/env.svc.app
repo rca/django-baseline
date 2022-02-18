@@ -1,4 +1,6 @@
 # add project-specific variables here
+ENVIRONMENT
+SENTRY_DSN
 # baseline variables below; do not edit
 CELERY_BROKER_URL
 CELERY_RESULT_BACKEND
