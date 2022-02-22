@@ -155,7 +155,7 @@ REST_FRAMEWORK = {
         "baseline.permissions.FullDjangoModelPermissions",
     ],
     "DEFAULT_RENDERER_CLASSES": [
-        "rest_framework.renderers.JSONRenderer",
+        "baseline.renderers.EnvelopeJSONRenderer",
     ],
     "PAGE_SIZE": 100,
 }
