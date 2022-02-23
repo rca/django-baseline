@@ -20,3 +20,10 @@ class UUIDModel(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def pk_s(self) -> str:
+        """
+        Return a string version of the UUID pk
+        """
+        return str(self.id)
