@@ -13,7 +13,3 @@ from baseline.settings import *
 
 ROOT_URLCONF = "bltestproject.urls"
 WSGI_APPLICATION = "bltestproject.wsgi.application"
-
-INSTALLED_APPS += [
-    "bltestapp",
-]
