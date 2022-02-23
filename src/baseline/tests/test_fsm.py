@@ -1,48 +1,50 @@
 import pytest
-from django.db import models
+
+from unittest import mock
+
 from django_fsm import FSMField, TransitionNotAllowed
 from model_utils import Choices
 
 from baseline.fsm import transition
 
 
-def assert_state(instance):
-    """
-    Callable to be passed into a transition method to inspect the running state
-    """
-    assert instance.state == "do_thing_running"
+def get_thing(*args, **kwargs):
+    thing = Thing(*args, **kwargs)
 
-
-class Thing(models.Model):
-    """
-    A class to test the transition running state
-    """
-
-    CHOICES = Choices("new", "done", "error")
-    state = FSMField(choices=CHOICES, default=CHOICES.new)
-
-    def save(self, *args, **kwargs):
-        """
-        Overrides the default state to make this a no-op
-        """
-
-    @transition(state, source=CHOICES.new, target=CHOICES.done, on_error=CHOICES.error)
-    def do_thing(self, callable):
-        """
-        Call the callable with the instance object
-
-        Args:
-            callable: the callable to run
-        """
-        callable(self)
+    return thing
 
 
 def test_set_transition_state():
     """
     Ensures a transition state is set when using the custom transition decorator
     """
-    x = Thing()
+
+    def assert_state(instance):
+        """
+        ensure the running state is set
+        """
+        assert instance.state == "do_thing_running"
+
+    x = get_thing()
     x.do_thing(assert_state)
+
+    # ensure the target transition is set when the process is done
+    assert x.state == x.CHOICES.done
+
+
+def test_custom_name():
+    """
+    Ensures a transition state is set to the custom name
+    """
+
+    def assert_state(instance):
+        """
+        ensure the custom state is used
+        """
+        assert instance.state == "WEEE"
+
+    x = get_thing()
+    x.do_another_thing(assert_state)
 
     # ensure the target transition is set when the process is done
     assert x.state == x.CHOICES.done
@@ -54,12 +56,30 @@ def test_cant_call_while_running():
     """
 
     def rerun(instance):
-        instance.do_thing(rerun)
+        """
+        call the transition again
+        """
+        instance.do_thing(None)
 
-    x = Thing()
+    x = get_thing()
 
     with pytest.raises(TransitionNotAllowed):
         x.do_thing(rerun)
 
     # ensure the target transition is set when the process is done
     assert x.state == x.CHOICES.error
+
+
+def test_disable_running_transition():
+    """
+    Ensures the running transition can be disabled
+    """
+
+    def assert_new(instance):
+        """
+        ensure the state is still the original state
+        """
+        assert instance.state == "new"
+
+    x = get_thing()
+    x.disable_running_state(assert_new)

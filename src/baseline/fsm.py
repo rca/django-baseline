@@ -24,7 +24,9 @@ def get_running_state_name(func: "Callable") -> str:
     return f"{func_name}_running"
 
 
-def set_transition_state(self: "models.Model", func: "Callable") -> None:
+def set_transition_state(
+    self: "models.Model", func: "Callable", state_value: str = None
+) -> None:
     """
     Sets the state to the running state for the given transition function
 
@@ -35,8 +37,10 @@ def set_transition_state(self: "models.Model", func: "Callable") -> None:
     Args:
         self: the model instance
         func: the function to derive the running state from
+        state_value: the value of the state
     """
-    self.state = get_running_state_name(func)
+    state_value = state_value or get_running_state_name(func)
+    self.state = state_value
     self.save()
 
 
@@ -48,6 +52,8 @@ def transition(
     conditions=None,
     permission=None,
     custom=None,
+    running_state: str = None,
+    set_running_state: bool = True,
 ):
     """
     Wrapper around Django FSM's transition() decorator
@@ -66,7 +72,10 @@ def transition(
       processes.  NOTE: a more dedicated locking mechanism should be used to
       mitigate race conditions.
 
-    Args: all the same args as Django FSM's transition
+    Args: all the same args as Django FSM's transition, plus
+        running_state: the value to be used as the running state; when not set
+          the name of the function with a _running suffix is used
+        set_running_state: Whether or not to set a running state
     """
     conditions = conditions or []
     custom = custom or {}
@@ -84,7 +93,9 @@ def transition(
 
         @functools.wraps(fn)
         def wrapper(self, *args, **kwargs):
-            set_transition_state(self, fn)
+            if set_running_state:
+                set_transition_state(self, fn, state_value=running_state)
+
             return fn(self, *args, **kwargs)
 
         wrapped = fsm_transition_result(wrapper)
