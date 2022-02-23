@@ -1,11 +1,9 @@
 import pytest
 
-from unittest import mock
 
-from django_fsm import FSMField, TransitionNotAllowed
-from model_utils import Choices
+from django_fsm import TransitionNotAllowed
 
-from baseline.fsm import transition
+from bltestapp.models import Thing
 
 
 def get_thing(*args, **kwargs):
