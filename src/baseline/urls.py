@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 
+from baseline.settings.utils import is_test
+
 
 class PrefixBasenameSimpleRouter(routers.SimpleRouter):
     def register(self, prefix, viewset, basename=None):
@@ -26,3 +28,8 @@ class PrefixBasenameSimpleRouter(routers.SimpleRouter):
 
 
 urlpatterns = [path("admin/", admin.site.urls)]
+
+if is_test():
+    from bltestapp import urls as bltestapp_urls
+
+    urlpatterns += bltestapp_urls.urlpatterns

@@ -23,7 +23,7 @@ def is_maintenance() -> bool:
     """
     import sys
 
-    is_test = False
+    maintenance = False
     if sys.argv[0].endswith("manage.py") and (
         len(sys.argv) == 1
         or (
@@ -38,8 +38,17 @@ def is_maintenance() -> bool:
             )
         )
     ):
-        is_test = True
-    elif "pytest" in sys.argv[0]:
-        is_test = True
+        maintenance = True
+    elif is_test():
+        maintenance = True
 
-    return is_test
+    return maintenance
+
+
+def is_test() -> bool:
+    """
+    Returns whether tests are being run
+    """
+    import sys
+
+    return "pytest" in sys.argv[0]

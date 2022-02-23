@@ -15,7 +15,7 @@ from pathlib import Path
 import conversion
 import dj_database_url
 
-from .utils import get_setting
+from .utils import get_setting, is_test
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -57,6 +57,11 @@ INSTALLED_APPS = [
     "baseline",
     "roles",
 ]
+
+if is_test():
+    INSTALLED_APPS += [
+        "bltestapp",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
