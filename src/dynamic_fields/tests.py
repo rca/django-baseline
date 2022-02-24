@@ -108,4 +108,4 @@ def test_api_request(db):
 
     assert 200 == response.status_code
 
-    assert sorted(list(response.data[0].keys())) == ["created", "id", "name"]
+    assert sorted(list(response.data["results"][0].keys())) == ["created", "id", "name"]
