@@ -159,3 +159,5 @@ REST_FRAMEWORK = {
     ],
     "PAGE_SIZE": 100,
 }
+
+TRAILING_SLASH = get_setting("TRAILING_SLASH", default=False)
