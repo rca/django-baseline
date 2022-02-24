@@ -25,6 +25,7 @@ requests = "*"
 whitenoise = "*"
 "zope.interface" = "*"
 "zope.event" = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 black = "*"
