@@ -1,4 +1,4 @@
-from baseline.urls import PrefixBasenameSimpleRouter
+from baseline.routers import PrefixBasenameSimpleRouter
 
 from .views import WidgetViewSet
 

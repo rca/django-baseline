@@ -15,17 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from rest_framework import routers
 
 from baseline.settings.utils import is_test
-
-
-class PrefixBasenameSimpleRouter(routers.SimpleRouter):
-    def register(self, prefix, viewset, basename=None):
-        basename = basename or prefix
-
-        super().register(prefix, viewset, basename)
-
 
 urlpatterns = [path("admin/", admin.site.urls)]
 
