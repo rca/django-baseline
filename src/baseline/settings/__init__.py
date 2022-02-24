@@ -33,6 +33,9 @@ ALLOWED_HOSTS = conversion.convert_list(
     get_setting("DJANGO_ALLOWED_HOSTS", default="", maintenance_default="*")
 )
 
+CORS_ALLOWED_ORIGINS = conversion.convert_list(
+    get_setting("CORS_ALLOWED_ORIGINS", default="")
+)
 
 # pypy compatibility
 PYPY_ENABLE_COMPAT = conversion.convert_bool(
@@ -46,6 +49,7 @@ if PYPY_ENABLE_COMPAT:
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -66,6 +70,7 @@ if is_test():
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
