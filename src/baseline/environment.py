@@ -44,10 +44,12 @@ class EnvironmentSetting:
     A environment variable lazy loader
     """
 
+    UNSET = "__UNSET__"
+
     def __init__(
         self,
         name: str,
-        default: Any = None,
+        default: Any = UNSET,
         required: bool = True,
     ):
         self.default = default
@@ -72,7 +74,7 @@ class EnvironmentSetting:
         try:
             value = os.environ[self.name]
         except KeyError:
-            if self.required and value is None:
+            if self.required and value is self.UNSET:
                 raise
 
         return value
@@ -98,11 +100,15 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
     def __init__(
         self,
         name: str,
-        default: Any = None,
-        maintenance_default: Any = None,
+        default: Any = EnvironmentSetting.UNSET,
+        maintenance_default: Any = EnvironmentSetting.UNSET,
         required: bool = True,
     ):
-        self.maintenance_default = maintenance_default or self.default_value
+        self.maintenance_default = (
+            self.default_value
+            if maintenance_default == EnvironmentSetting.UNSET
+            else maintenance_default
+        )
 
         super().__init__(
             name,

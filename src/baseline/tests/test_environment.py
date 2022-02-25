@@ -11,6 +11,19 @@ def disable_maintenance(monkeypatch):
     monkeypatch.setattr("baseline.environment.is_maintenance", lambda: False)
 
 
+def test_default_in_normal_mode(disable_maintenance):
+    """
+    Ensure getting the value blows up when not in test mode
+    """
+    setting = MaintenanceEnvironmentSetting(
+        TEST_ENVIRONMENT_VARIABLE_NAME, default=None
+    )
+
+    value = setting.get()
+
+    assert value is None
+
+
 def test_test_default_in_normal_mode(disable_maintenance):
     """
     Ensure getting the value blows up when not in test mode
@@ -69,6 +82,17 @@ def test_test_default_in_test_mode_with_test_override():
     )
 
     assert setting.get() == barfoo
+
+
+def test_test_default_in_test_mode_with_None_override():
+    """
+    Ensure None is returned in test mode
+    """
+    setting = MaintenanceEnvironmentSetting(
+        TEST_ENVIRONMENT_VARIABLE_NAME, maintenance_default=None
+    )
+
+    assert setting.get() is None
 
 
 def test_environment_setting_catalog():
