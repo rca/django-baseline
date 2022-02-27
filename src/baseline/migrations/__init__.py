@@ -91,6 +91,53 @@ def create_content_types_and_permissions(app_name: str, apps, schema_editor):
     create_permissions(app_config)
 
 
+def migrate_permissions_in_group(
+    group_name: str,
+    app_name: str,
+    model_name: str,
+    permissions_verbs: Iterable[str],
+) -> Iterable["Operation"]:
+    """
+    Returns a list of operations for setting group permissions
+
+    The operations returned make sure that the content types and permissions have first been set
+    in the database for the model these permissions correspond to, as well as the operation for
+    setting the permissions in the group.
+
+    Args:
+        group_name: the name of the group to operate on; it must already exist
+        app_name: the name of the app the model belongs to
+        model_name: the name of the model the permissions belong to
+        permissions_verbs: the permissions to set in the group, i.e. add, change, delete, view
+
+    Returns:
+        a list of operations that can be added to a Migration class's `operations` list
+    """
+    operations = [
+        setup_content_types(app_name),
+        migrations.RunPython(
+            functools.partial(
+                change_permissions_in_group,
+                "add",
+                group_name,
+                app_name,
+                model_name,
+                permissions_verbs,
+            ),
+            functools.partial(
+                change_permissions_in_group,
+                "remove",
+                group_name,
+                app_name,
+                model_name,
+                permissions_verbs,
+            ),
+        ),
+    ]
+
+    return operations
+
+
 def remove_content_types(app_name: str, apps, schema_editor):
     """
     Stub for removing content types; this is currently a no-op
