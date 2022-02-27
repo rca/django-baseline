@@ -8,8 +8,67 @@ from django.db import migrations
 
 if typing.TYPE_CHECKING:
     from django.db.migrations.operations.base import Operation
+    from django.contrib.auth.models import Permission
+
+Iterable = typing.Iterable
 
 
+def change_permissions_in_group(
+    operation: str,
+    group_name: str,
+    app_name: str,
+    model_name: str,
+    permissions_verbs: Iterable[str],
+    apps,
+    schema_editor,
+) -> Iterable["Permission"]:
+    """
+    Changes the listed permissions to a group
+
+    Using the ContentTypes framework get the permissions for the app and model name args, then
+    iterate through that model's permissions and change any that match the verbs given, where the
+    default verbs given to a model are: add, change, delete, view.
+
+    They are added or removed per the `operation` arg, which can be: add, remove
+
+    Args:
+        operation: add or remove
+        group_name:
+        app_name:
+        model_name:
+        permissions_verbs:
+        apps:
+        schema_editor:
+
+    Returns:
+        the list of permissions added
+    """
+    db_alias = schema_editor.connection.alias
+
+    if operation not in ("add", "remove"):
+        raise ValueError("operation must be 'add' or 'remove'")
+
+    Group = apps.get_model("auth", "Group")
+    group = Group.objects.using(db_alias).get(name=group_name)
+
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    content_type = ContentType.objects.using(db_alias).get(
+        app_label=app_name, model=model_name
+    )
+
+    permissions = []
+    for verb in permissions_verbs:
+        prefix = f"{verb}_"
+        permissions.append(
+            # get each permission in order to catch if one of the given verbs is
+            # not in the db
+            content_type.permission_set.using(db_alias).get(codename__startswith=prefix)
+        )
+
+    operation_fn = getattr(group.permissions, operation)
+    operation_fn(*permissions)
+
+    return permissions
 
 
 def create_content_types_and_permissions(app_name: str, apps, schema_editor):
