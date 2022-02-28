@@ -62,9 +62,10 @@ INSTALLED_APPS = [
     "roles",
 ]
 
+BASELINE_TEST_APP = "bltestapp"
 if is_test():
     INSTALLED_APPS += [
-        "bltestapp",
+        BASELINE_TEST_APP,
     ]
 
 MIDDLEWARE = [
@@ -147,6 +148,11 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
