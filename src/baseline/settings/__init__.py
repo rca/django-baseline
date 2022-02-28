@@ -62,9 +62,10 @@ INSTALLED_APPS = [
     "roles",
 ]
 
+BASELINE_TEST_APP = "bltestapp"
 if is_test():
     INSTALLED_APPS += [
-        "bltestapp",
+        BASELINE_TEST_APP,
     ]
 
 MIDDLEWARE = [
