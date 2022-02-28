@@ -3,6 +3,7 @@ import typing
 import pytest
 
 from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
 
 from baseline import tests
 from baseline.types import ModelType
@@ -24,6 +25,46 @@ class ModelError(Exception):
 
 def pytest_configure(config):
     tests.IS_PYTEST_RUNNING = True
+
+
+@pytest.fixture()
+def get_api_client(get_user) -> "Callable":
+    """
+    Returns a test API client instance
+
+    Args:
+        get_user: fixture to create a user
+
+    Returns:
+        Callable
+    """
+
+    def fixture(user: "User" = None, create_user: bool = False) -> "APIClient":
+        """
+        Returns a rest framework API client instance
+
+        Args:
+            user: optional user to login to the client
+            create_user: whether to create a new user
+
+        Returns:
+            an API client instance
+        """
+        if create_user:
+            if user:
+                raise ValueError("Cannot set create_user and provide a user instance")
+
+            user = get_user(username="test_user")
+
+        client = APIClient()
+
+        # when there is a user instance, authenticate the client
+        if user:
+            client.force_authenticate(user)
+
+        return client
+
+    return fixture
 
 
 @pytest.fixture()
