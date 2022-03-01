@@ -106,3 +106,26 @@ def test_environment_setting_catalog():
     assert isinstance(settings, dict)
 
     assert len(settings) > 0
+
+
+def test_unset_setting_not_required():
+    """
+    Ensure setting not required returns None
+    """
+    setting = MaintenanceEnvironmentSetting(
+        TEST_ENVIRONMENT_VARIABLE_NAME, required=False
+    )
+
+    assert setting.get() is None
+
+
+def test_unset_setting_not_required_with_maintenance_default():
+    """
+    Ensure setting not required returns None
+    """
+    value = "i should get this"
+    setting = MaintenanceEnvironmentSetting(
+        TEST_ENVIRONMENT_VARIABLE_NAME, required=False, maintenance_default=value
+    )
+
+    assert setting.get() is value

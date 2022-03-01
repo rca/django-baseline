@@ -69,13 +69,16 @@ class EnvironmentSetting:
         """
         return {"default": self.default, "required": self.required}
 
-    def get(self):
-        value = self.default
+    def get(self, default=None):
+        value = default or self.default
         try:
             value = os.environ[self.name]
         except KeyError:
-            if self.required and value is self.UNSET:
-                raise
+            if value is self.UNSET:
+                if self.required:
+                    raise
+                else:
+                    value = None
 
         return value
 
@@ -104,11 +107,7 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         maintenance_default: Any = EnvironmentSetting.UNSET,
         required: bool = True,
     ):
-        self.maintenance_default = (
-            self.default_value
-            if maintenance_default == EnvironmentSetting.UNSET
-            else maintenance_default
-        )
+        self.maintenance_default = maintenance_default
 
         super().__init__(
             name,
@@ -127,10 +126,26 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
         return attributes
 
     def get(self):
+        maintenance = is_maintenance()
+
+        default = None
         try:
-            value = super().get()
+            if self.default is not self.UNSET:
+                default = self.default
+            elif maintenance and self.maintenance_default is not self.UNSET:
+                default = self.maintenance_default
+            elif not self.required:
+                default = None
+            elif maintenance:
+                default = (
+                    self.default_value
+                    if self.maintenance_default is self.UNSET
+                    else self.maintenance_default
+                )
+
+            value = super().get(default=default)
         except KeyError:
-            if is_maintenance():
+            if maintenance:
                 value = self.maintenance_default
             else:
                 raise
