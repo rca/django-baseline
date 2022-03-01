@@ -107,6 +107,10 @@ database = dj_database_url.config(default=DATABASE_URL)
 if not database:
     raise ValueError("no database found")
 
+# set the role per the env
+POSTGRES_SET_ROLE = get_setting("POSTGRES_SET_ROLE", required=False)
+if POSTGRES_SET_ROLE:
+    database["SET_ROLE"] = POSTGRES_SET_ROLE
 
 DATABASES = {"default": database}
 
