@@ -41,4 +41,6 @@ FROM base AS app
 
 COPY --from=builder ${APP_DIR} ${APP_DIR}
 
+WORKDIR ${APP_DIR}
+
 CMD ["/usr/local/bin/run-gunicorn"]
