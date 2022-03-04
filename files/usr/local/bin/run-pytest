@@ -25,4 +25,6 @@ echo "database=${database}"
 # wait for the database to be available
 /usr/local/bin/wait-for-it.sh "${database}"
 
+pwd
+
 exec pytest "$@"
