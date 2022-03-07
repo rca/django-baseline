@@ -10,8 +10,11 @@ class EnvelopeJSONRenderer(JSONRenderer):
             # same object that's referenced in the upstream Response object
             enveloped_data = {"result": data.copy()}
 
-            data.clear()
-            data.update(enveloped_data)
+            if isinstance(data, dict):
+                data.clear()
+                data.update(enveloped_data)
+            else:
+                data = enveloped_data
 
         rendered = super().render(data, accepted_media_type, renderer_context)
 
