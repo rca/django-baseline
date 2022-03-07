@@ -10,9 +10,11 @@ from baseline.utils import get_permissions, change_group_permissions
 
 if typing.TYPE_CHECKING:
     from django.db.migrations.operations.base import Operation
-    from django.contrib.auth.models import Permission
+    from django.contrib.auth.models import Group, Permission
+
 
 Iterable = typing.Iterable
+List = typing.List
 
 
 def change_permissions_in_group(
@@ -88,12 +90,72 @@ def create_content_types_and_permissions(app_name: str, apps, schema_editor):
     create_permissions(app_config)
 
 
+def group_add(group_name: str, apps, schema_editor) -> "Group":
+    """
+    Adds a group
+
+    Args:
+        group_name: the name of the group
+        apps: apps object provided by the migrations run
+        schema_editor: the schema_editor object provided by the migrations run
+    """
+    db_alias = schema_editor.connection.alias
+
+    # create a group for firebase functions that permissions can be added to
+    Group = apps.get_model("auth", "Group")
+
+    return Group.objects.using(db_alias).create(name=group_name)
+
+
+def group_remove(group_name: str, apps, schema_editor):
+    """
+    Removes a group
+
+    Args:
+        group_name: the name of the group
+        apps: apps object provided by the migrations run
+        schema_editor: the schema_editor object provided by the migrations run
+    """
+    db_alias = schema_editor.connection.alias
+
+    # create a group for firebase functions that permissions can be added to
+    Group = apps.get_model("auth", "Group")
+
+    return Group.objects.using(db_alias).get(name=group_name).delete()
+
+
+def migrate_group(group_name: str) -> List["Operation"]:
+    """
+    Returns a list of operations for setting up a new group
+
+    Args:
+        group_name: the name of the group to operate on; it must already exist
+
+    Returns:
+        a list of operations that can be added to a Migration class's `operations` list
+    """
+    operations = [
+        migrations.RunPython(
+            functools.partial(
+                group_add,
+                group_name,
+            ),
+            functools.partial(
+                group_remove,
+                group_name,
+            ),
+        ),
+    ]
+
+    return operations
+
+
 def migrate_permissions_in_group(
     group_name: str,
     app_name: str,
     model_name: str,
     permissions_verbs: Iterable[str],
-) -> Iterable["Operation"]:
+) -> List["Operation"]:
     """
     Returns a list of operations for setting group permissions
 
