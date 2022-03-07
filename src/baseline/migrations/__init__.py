@@ -6,6 +6,8 @@ from django.contrib.auth.management import create_permissions
 from django.contrib.contenttypes.management import create_contenttypes
 from django.db import migrations
 
+from baseline.utils import get_permissions, change_group_permissions
+
 if typing.TYPE_CHECKING:
     from django.db.migrations.operations.base import Operation
     from django.contrib.auth.models import Permission
@@ -48,25 +50,20 @@ def change_permissions_in_group(
     if operation not in ("add", "remove"):
         raise ValueError("operation must be 'add' or 'remove'")
 
-    Group = apps.get_model("auth", "Group")
-    group = Group.objects.using(db_alias).get(name=group_name)
-
+    # get the permissions
     ContentType = apps.get_model("contenttypes", "ContentType")
-    content_type = ContentType.objects.using(db_alias).get(
-        app_label=app_name, model=model_name
+    permissions = get_permissions(
+        app_name,
+        model_name,
+        permissions_verbs,
+        content_type_cls=ContentType,
+        db_alias=db_alias,
     )
 
-    permissions = []
-    for verb in permissions_verbs:
-        prefix = f"{verb}_"
-        permissions.append(
-            # get each permission in order to catch if one of the given verbs is
-            # not in the db
-            content_type.permission_set.using(db_alias).get(codename__startswith=prefix)
-        )
-
-    operation_fn = getattr(group.permissions, operation)
-    operation_fn(*permissions)
+    Group = apps.get_model("auth", "Group")
+    change_group_permissions(
+        group_name, operation, permissions, group_cls=Group, db_alias=db_alias
+    )
 
     return permissions
 
