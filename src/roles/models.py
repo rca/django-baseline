@@ -34,6 +34,8 @@ class Role(Group):
     A role, which comprises zero or more Django groups
     """
 
+    codename = models.CharField(max_length=64, unique=True)
+
     groups = models.ManyToManyField(Group, related_name="role_groups")
 
     objects = RoleManager()
@@ -47,7 +49,18 @@ class Role(Group):
         if not self.name.startswith(ROLE_NAME_PREFIX):
             self.name = f"{ROLE_NAME_PREFIX}{self.name}"
 
+        if not self.codename:
+            self.set_codename()
+
         super().save(force_insert, force_update, using, update_fields)
+
+    def set_codename(self):
+        """
+        Sets the codename based on the name attr
+        """
+        self.codename = (
+            self.name.replace(ROLE_NAME_PREFIX, "").replace(" ", "_").lower()
+        )
 
     def sync_permissions(self):
         """
