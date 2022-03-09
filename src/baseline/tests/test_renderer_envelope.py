@@ -5,7 +5,9 @@ from bltestapp.models import Widget
 
 
 def test_detail_envelope(db):
-    """ """
+    """
+    ensure the response ends up in a `result` key
+    """
     client = APIClient()
 
     widget = Widget.objects.create(name="test widget", quantity=1)
@@ -17,7 +19,9 @@ def test_detail_envelope(db):
 
 
 def test_list_envelope(db):
-    """ """
+    """
+    ensure a list request does not re-wrap the `results` key
+    """
     client = APIClient()
 
     widget = Widget.objects.create(name="test widget", quantity=1)
