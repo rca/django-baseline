@@ -4,8 +4,7 @@ Module defining logic to dynamically select fields to return
 import functools
 import typing
 
-from rest_framework import serializers
-
+from rest_framework import permissions, serializers
 
 # noinspection PyAbstractClass
 class DynamicFieldSerializer(serializers.Serializer):
@@ -21,13 +20,20 @@ class DynamicFieldSerializer(serializers.Serializer):
     `test`, which is the lowercased name of the class with `serializer` removed).
     """
 
-    def __init__(self, *args, **kwargs):
-        # Don't pass the 'fields' arg up to the superclass
-        fields = kwargs.pop("fields", None)
-
+    def __init__(self, *args, fields=None, **kwargs):
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
 
+        request = kwargs.get("context", {}).get("request")
+        if (
+            fields
+            or not request
+            or request
+            and request.method in permissions.SAFE_METHODS
+        ):
+            self._setup_fields(fields, **kwargs)
+
+    def _setup_fields(self, fields=None, **kwargs):
         # the original set of field names
         original_field_names = set(self.fields)
 
