@@ -43,4 +43,11 @@ COPY --from=builder ${APP_DIR} ${APP_DIR}
 
 WORKDIR ${APP_DIR}
 
+ARG VERSION
+
+ENV VERSION=${VERSION}
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV PYTHONUNBUFFERED=1
+
 CMD ["/usr/local/bin/run-gunicorn"]
