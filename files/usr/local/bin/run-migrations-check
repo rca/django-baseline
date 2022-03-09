@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+set -x
+
+exec python manage.py makemigrations --dry-run --check --no-input
