@@ -1,6 +1,6 @@
 from unittest import mock
 
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
@@ -109,3 +109,17 @@ def test_api_request(db):
     assert 200 == response.status_code
 
     assert sorted(list(response.data["results"][0].keys())) == ["created", "id", "name"]
+
+
+def test_post_dynamic_field(db):
+    client = APIClient()
+
+    data = {
+        "name": "test widget",
+        "quantity": 100,
+    }
+
+    url = reverse("widgets-list")
+    response = client.post(url, data=data, format="json")
+
+    assert response.status_code == status.HTTP_201_CREATED
