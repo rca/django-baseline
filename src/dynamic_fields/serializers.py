@@ -25,6 +25,9 @@ class DynamicFieldSerializer(serializers.Serializer):
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
 
+        self._setup_fields(fields, **kwargs)
+
+    def _setup_fields(self, fields=None, **kwargs):
         # the original set of field names
         original_field_names = set(self.fields)
 
