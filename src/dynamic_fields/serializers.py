@@ -48,7 +48,7 @@ class DynamicFieldSerializer(serializers.Serializer):
             # actually defined in the fields list; otherwise blow up
             assert (
                 len(dynamic_fields - output_fields) == 0
-            ), "fields listed in `dynamic_fields` must be in `fields`"
+            ), f"fields listed in `dynamic_fields` must be in `fields`, dynamic_fields={dynamic_fields}, output_fields={output_fields}"
 
             output_fields = dynamic_fields
 
