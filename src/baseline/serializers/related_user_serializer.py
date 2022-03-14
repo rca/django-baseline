@@ -12,4 +12,5 @@ class RelatedUserSerializer(BaseUserSerializer):
 
         By doing this, the user will not be created, but instead an existing user will be referenced
         """
-        return User.objects.get(username=data)
+        username = data["username"]
+        return User.objects.get(username=username)
