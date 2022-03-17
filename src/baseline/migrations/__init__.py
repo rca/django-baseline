@@ -3,14 +3,15 @@ import typing
 
 from django.apps.registry import apps as global_apps
 from django.contrib.auth.management import create_permissions
+from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.management import create_contenttypes
 from django.db import migrations
 
 from baseline.utils import get_permissions, change_group_permissions
+from roles.models import Role
 
 if typing.TYPE_CHECKING:
     from django.db.migrations.operations.base import Operation
-    from django.contrib.auth.models import Group, Permission
 
 
 Iterable = typing.Iterable
@@ -90,6 +91,18 @@ def create_content_types_and_permissions(app_name: str, apps, schema_editor):
     create_permissions(app_config)
 
 
+def get_group(group_name: str, apps, schema_editor):
+    """
+    Returns the requested group
+    """
+    db_alias = schema_editor.connection.alias
+
+    # create a group for firebase functions that permissions can be added to
+    Group = apps.get_model("auth", "Group")
+
+    return Group.objects.using(db_alias).get(name=group_name)
+
+
 def group_add(group_name: str, apps, schema_editor) -> "Group":
     """
     Adds a group
@@ -116,12 +129,7 @@ def group_remove(group_name: str, apps, schema_editor):
         apps: apps object provided by the migrations run
         schema_editor: the schema_editor object provided by the migrations run
     """
-    db_alias = schema_editor.connection.alias
-
-    # create a group for firebase functions that permissions can be added to
-    Group = apps.get_model("auth", "Group")
-
-    return Group.objects.using(db_alias).get(name=group_name).delete()
+    return get_group(group_name, apps, schema_editor).delete()
 
 
 def migrate_group(group_name: str) -> List["Operation"]:
@@ -192,6 +200,13 @@ def migrate_permissions_in_group(
                 permissions_verbs,
             ),
         ),
+        migrations.RunPython(
+            functools.partial(
+                sync_roles,
+                group_name,
+            ),
+            lambda *args, **kwargs: None,
+        ),
     ]
 
     return operations
@@ -219,3 +234,19 @@ def setup_content_types(app_name: str) -> "Operation":
         functools.partial(create_content_types_and_permissions, app_name),
         functools.partial(remove_content_types, app_name),
     )
+
+
+def sync_roles(group_name: str, apps, schema_editor):
+    """
+    Explicitly sync roles the given group is associated with
+
+    Because signals are not called automatically by migrations
+
+    Args:
+        group_name: the name of the group
+    """
+    group = Group.objects.get(name=group_name)
+    roles = Role.objects.filter(groups__in=[group])
+
+    for role in roles:
+        role.sync_permissions()
