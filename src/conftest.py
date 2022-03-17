@@ -106,13 +106,18 @@ def get_user(db, get_username) -> "Callable":
     """
 
     def fixture(
-        *args, groups: Iterable["Group"] = None, _save: bool = True, **kwargs
+        *args,
+        groups: Iterable["Group"] = None,
+        _permissions: Iterable["Permission"] = None,
+        _save: bool = True,
+        **kwargs,
     ) -> "User":
         """
 
         Args:
             *args: Passed to User constructor
             groups: a list of groups to be added to the user
+            _permissions: a list of permissions to add to the user
             _save: whether to save the user object
             **kwargs: Passed to User constructor
 
@@ -126,7 +131,7 @@ def get_user(db, get_username) -> "Callable":
             username=get_username,
         )
         for k, v_callable in defaults.items():
-            if k not in kwargs:
+            if k not in kwargs or kwargs[k] is None:
                 kwargs[k] = v_callable()
 
         user = User(*args, **kwargs)
@@ -137,6 +142,10 @@ def get_user(db, get_username) -> "Callable":
 
         if groups:
             user.groups.set(groups)
+
+        if _permissions:
+            for permission in _permissions:
+                user.user_permissions.add(permission)
 
         return user
 
