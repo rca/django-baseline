@@ -36,7 +36,7 @@ class Role(Group):
 
     codename = models.CharField(max_length=64, unique=True)
 
-    groups = models.ManyToManyField(Group, related_name="role_groups")
+    groups = models.ManyToManyField(Group, related_name="roles")
 
     objects = RoleManager()
 
