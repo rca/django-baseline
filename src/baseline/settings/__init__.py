@@ -37,6 +37,11 @@ CORS_ALLOWED_ORIGINS = conversion.convert_list(
     get_setting("CORS_ALLOWED_ORIGINS", default="")
 )
 
+CSRF_TRUSTED_ORIGINS = conversion.convert_list(
+    get_setting("CSRF_TRUSTED_ORIGINS", default="")
+)
+
+
 # pypy compatibility
 PYPY_ENABLE_COMPAT = conversion.convert_bool(
     get_setting("PYPY_ENABLE_COMPAT", default="false")
