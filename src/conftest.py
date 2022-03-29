@@ -153,7 +153,7 @@ def get_user(db, get_username) -> "Callable":
 
 
 @pytest.fixture()
-def get_username() -> "Callable":
+def get_username(db) -> "Callable":
     def fixture(prefix: str = "test_user") -> str:
         """
         Returns a unique username
