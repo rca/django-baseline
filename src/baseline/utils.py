@@ -8,7 +8,30 @@ from baseline.types import ModelType, StringList
 if typing.TYPE_CHECKING:
     from django.contrib.auth.models import Permission
 
+Any = typing.Any
+List = typing.List
 PermissionList = typing.Iterable["Permission"]
+
+
+class Chunker:
+    """
+    Iterator to split a given list into `chunk_size` chunks
+    """
+
+    def __init__(self, items: List[Any], chunk_size: int):
+        self.chunk_size = chunk_size
+        self.items = items
+        self.idx = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        chunk, self.items = self.items[: self.chunk_size], self.items[self.chunk_size :]
+        if not chunk:
+            raise StopIteration()
+
+        return chunk
 
 
 def change_group_permissions(
