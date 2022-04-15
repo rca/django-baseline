@@ -3,7 +3,9 @@ Settings module to configure a basic Redis cache
 """
 from .utils import get_setting
 
-REDIS_CACHE_URL = get_setting("REDIS_CACHE_URL", maintenance_default="redis://redis:6379/0")
+REDIS_CACHE_URL = get_setting(
+    "REDIS_CACHE_URL", maintenance_default="redis://redis:6379/0"
+)
 
 CACHES = {
     "default": {
