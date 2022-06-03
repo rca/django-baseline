@@ -85,7 +85,7 @@ def test_dynamic_model_fields():
     widget = Widget(name="test widget", quantity=11)
     serializer = WidgetSerializer(widget, fields="widget_id,widget_name")
 
-    assert sorted(list(serializer.data.keys())), serializer.data == ["id", "name"]
+    assert sorted(list(serializer.data.keys())) == ["id", "name"], serializer.data
 
 
 def test_default_model_fields():
