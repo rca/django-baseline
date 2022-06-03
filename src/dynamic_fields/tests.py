@@ -9,17 +9,48 @@ from bltestapp.serializers import WidgetSerializer
 from dynamic_fields.serializers import DynamicFieldSerializer
 
 
-class TestSerializer(DynamicFieldSerializer, serializers.Serializer):
-    first = serializers.CharField()
-    last = serializers.CharField()
-
-
 class TestExplicitPrefixSerializer(DynamicFieldSerializer, serializers.Serializer):
     first = serializers.CharField()
     last = serializers.CharField()
 
     class Meta:
         field_prefix = "ExplicitName"
+
+
+class TestSerializer(DynamicFieldSerializer, serializers.Serializer):
+    first = serializers.CharField()
+    last = serializers.CharField()
+
+
+class NestedTestSerializer(DynamicFieldSerializer):
+    widget = WidgetSerializer()
+    owner_name = serializers.CharField()
+
+
+def test_nested_dynamic_fields():
+    """
+    ensure dynamic fields in nested serializers can be selected
+    """
+    widget = Widget(name="test widget", quantity=11)
+    serializer = NestedTestSerializer(
+        instance={
+            "widget": widget,
+            "owner_name": "test_name",
+        },
+        fields="widget_created,widget_name,widget_quantity",
+    )
+
+    assert sorted(list(serializer.data.keys())) == [
+        "owner_name",
+        "widget",
+    ], serializer.data
+
+    assert sorted(list(serializer.data["widget"].keys())) == [
+        "created",
+        "id",
+        "name",
+        "quantity",
+    ], serializer.data
 
 
 def test_serializer_prefix():
