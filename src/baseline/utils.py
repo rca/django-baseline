@@ -1,3 +1,5 @@
+import importlib
+import os
 import typing
 
 from django.contrib.auth.models import Group
@@ -95,3 +97,48 @@ def get_permissions(
             )
 
     return permissions
+
+
+def get_package_items(package_path: str, package_name: str, base: typing.Type):
+    """
+    Get the items in the given package path that match the requested type
+
+    Args:
+        package_path: the package's location on disk, i.e. __file__
+        package_name: the package name, i.e. __name__
+        base: the types of items to return
+    """
+    items = set()
+
+    for filename in os.listdir(os.path.dirname(package_path)):
+        # ignore files that start with underscores
+        if filename.startswith("__"):
+            continue
+
+        module_name, _ = os.path.splitext(filename)
+        full_name = f"{package_name}.{module_name}"
+        _module = importlib.import_module(full_name)
+        for attr_name in dir(_module):
+            # ignore items that start with underscores
+            if attr_name.startswith("__"):
+                continue
+
+            attr = getattr(_module, attr_name)
+
+            try:
+                if not issubclass(attr, base):
+                    continue
+            except TypeError:
+                try:
+                    if not isinstance(attr, base):
+                        continue
+                except TypeError:
+                    continue
+
+            # do not yield the same item more than once
+            if attr in items:
+                continue
+
+            items.add(attr)
+
+            yield attr
