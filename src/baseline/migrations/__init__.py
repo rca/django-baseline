@@ -105,7 +105,7 @@ def get_role(role_name: str, apps, schema_editor) -> "Role":
     Returns the requested role
     """
     return get_schema_model_instance(
-        "roles", "Role", apps, schema_editor, name=role_name
+        "roles", "Role", apps, schema_editor, codename=role_name
     )
 
 
@@ -338,7 +338,7 @@ def role_create(role_name: str, apps, schema_editor):
     # create a group for firebase functions that permissions can be added to
     SchemaRole = get_schema_model("roles", "Role", apps, schema_editor)
 
-    return SchemaRole.objects.using(db_alias).create(name=role_name)
+    return SchemaRole.objects.using(db_alias).create(codename=role_name)
 
 
 def role_delete(role_name: str, apps, schema_editor):
