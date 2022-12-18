@@ -108,7 +108,9 @@ WSGI_APPLICATION = "webproject.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-DATABASE_URL = get_setting("DATABASE_URL")
+DATABASE_URL = get_setting(
+    "DATABASE_URL", maintenance_default="postgres://local:local@postgres/local"
+)
 database = dj_database_url.config(default=DATABASE_URL)
 if not database:
     raise ValueError("no database found")

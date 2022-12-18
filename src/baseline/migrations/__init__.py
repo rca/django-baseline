@@ -54,7 +54,7 @@ def change_permissions_in_group(
         raise ValueError("operation must be 'add' or 'remove'")
 
     # get the permissions
-    ContentType = apps.get_model("contenttypes", "ContentType")
+    ContentType = get_schema_model("contenttypes", "ContentType", apps, schema_editor)
     permissions = get_permissions(
         app_name,
         model_name,
@@ -63,7 +63,7 @@ def change_permissions_in_group(
         db_alias=db_alias,
     )
 
-    Group = apps.get_model("auth", "Group")
+    Group = get_schema_model("auth", "Group", apps, schema_editor)
     change_group_permissions(
         group_name, operation, permissions, group_cls=Group, db_alias=db_alias
     )
@@ -95,12 +95,56 @@ def get_group(group_name: str, apps, schema_editor):
     """
     Returns the requested group
     """
+    return get_schema_model_instance(
+        "auth", "Group", apps, schema_editor, name=group_name
+    )
+
+
+def get_role(role_name: str, apps, schema_editor) -> "Role":
+    """
+    Returns the requested role
+    """
+    return get_schema_model_instance(
+        "roles", "Role", apps, schema_editor, name=role_name
+    )
+
+
+def get_schema_model(app_name: str, model_name: str, apps, schema_editor):
+    """
+    Returns the schema model instance
+
+    Args:
+        app_name: the name of the app
+        model_name: the name of the models
+        apps: the apps instance passed into migrations functions
+        schema_editor: the schema editor instance passed into migrations functions
+
+    Returns:
+        the schema model instance
+    """
+    return apps.get_model(app_name, model_name)
+
+
+def get_schema_model_instance(app_name, model_name, apps, schema_editor, **kwargs):
+    """
+    Returns a record for the given model instance
+
+    Args:
+        app_name: the name of the app
+        model_name: the name of the models
+        apps: the apps instance passed into migrations functions
+        schema_editor: the schema editor instance passed into migrations functions
+        **kwargs: passed directly into .get()
+
+    Returns:
+        the schema model instance
+    """
     db_alias = schema_editor.connection.alias
 
     # create a group for firebase functions that permissions can be added to
-    Group = apps.get_model("auth", "Group")
+    SchemaModel = get_schema_model(app_name, model_name, apps, schema_editor)
 
-    return Group.objects.using(db_alias).get(name=group_name)
+    return SchemaModel.objects.using(db_alias).get(**kwargs)
 
 
 def group_add(group_name: str, apps, schema_editor) -> "Group":
@@ -115,7 +159,7 @@ def group_add(group_name: str, apps, schema_editor) -> "Group":
     db_alias = schema_editor.connection.alias
 
     # create a group for firebase functions that permissions can be added to
-    Group = apps.get_model("auth", "Group")
+    Group = get_schema_model("auth", "Group", apps, schema_editor)
 
     return Group.objects.using(db_alias).create(name=group_name)
 
@@ -137,7 +181,7 @@ def migrate_group(group_name: str) -> List["Operation"]:
     Returns a list of operations for setting up a new group
 
     Args:
-        group_name: the name of the group to operate on; it must already exist
+        group_name: the name of the group to operate on
 
     Returns:
         a list of operations that can be added to a Migration class's `operations` list
@@ -163,7 +207,7 @@ def migrate_permissions_in_group(
     app_name: str,
     model_name: str,
     permissions_verbs: Iterable[str],
-) -> List["Operation"]:
+) -> "List[Operation]":
     """
     Returns a list of operations for setting group permissions
 
@@ -178,7 +222,8 @@ def migrate_permissions_in_group(
         permissions_verbs: the permissions to set in the group, i.e. add, change, delete, view
 
     Returns:
-        a list of operations that can be added to a Migration class's `operations` list
+        List[Operation]:
+            a list of operations that can be added to a Migration class's `operations` list
     """
     operations = [
         setup_content_types(app_name),
@@ -202,10 +247,75 @@ def migrate_permissions_in_group(
         ),
         migrations.RunPython(
             functools.partial(
-                sync_roles,
+                sync_group_roles,
                 group_name,
             ),
             lambda *args, **kwargs: None,
+        ),
+    ]
+
+    return operations
+
+
+def migrate_role(role_name: str) -> List["Operation"]:
+    """
+    Returns a list of operations for setting up a new role
+
+    Args:
+        role_name: the name of the role to operate on
+
+    Returns:
+        a list of operations that can be added to a Migration class's `operations` list
+    """
+    operations = [
+        migrations.RunPython(
+            functools.partial(
+                role_create,
+                role_name,
+            ),
+            functools.partial(
+                role_delete,
+                role_name,
+            ),
+        ),
+    ]
+
+    return operations
+
+
+def migrate_role_group(role_name: str, group_name: str) -> List["Operation"]:
+    """
+    Returns a list of operations for managing a group within a role
+
+    Args:
+        role_name: the name of the role to operate on; it must already exist
+        group_name: the name of the group to operate on within the role
+
+    Returns:
+        a list of operations that can be added to a Migration class's `operations` list
+    """
+    operations = [
+        migrations.RunPython(
+            functools.partial(
+                role_add_group,
+                role_name,
+                group_name,
+            ),
+            functools.partial(
+                role_remove_group,
+                role_name,
+                group_name,
+            ),
+        ),
+        migrations.RunPython(
+            functools.partial(
+                sync_role,
+                role_name,
+            ),
+            functools.partial(
+                sync_role,
+                role_name,
+            ),
         ),
     ]
 
@@ -217,6 +327,45 @@ def remove_content_types(app_name: str, apps, schema_editor):
     Stub for removing content types; this is currently a no-op
     """
     pass
+
+
+def role_create(role_name: str, apps, schema_editor):
+    """
+    Creates a role
+    """
+    db_alias = schema_editor.connection.alias
+
+    # create a group for firebase functions that permissions can be added to
+    SchemaRole = get_schema_model("roles", "Role", apps, schema_editor)
+
+    return SchemaRole.objects.using(db_alias).create(name=role_name)
+
+
+def role_delete(role_name: str, apps, schema_editor):
+    """
+    Removes a role
+    """
+    return get_role(role_name, apps, schema_editor).delete()
+
+
+def role_add_group(role_name: str, group_name: str, apps, schema_editor):
+    """
+    Adds a group to a role
+    """
+    role = get_role(role_name, apps, schema_editor)
+    group = get_group(group_name, apps, schema_editor)
+
+    role.groups.add(group)
+
+
+def role_remove_group(role_name: str, group_name: str, apps, schema_editor):
+    """
+    Removes a group from a role
+    """
+    role = get_role(role_name, apps, schema_editor)
+    group = get_group(group_name, apps, schema_editor)
+
+    role.groups.remove(group)
 
 
 def setup_content_types(app_name: str) -> "Operation":
@@ -236,7 +385,7 @@ def setup_content_types(app_name: str) -> "Operation":
     )
 
 
-def sync_roles(group_name: str, apps, schema_editor):
+def sync_group_roles(group_name: str, apps, schema_editor):
     """
     Explicitly sync roles the given group is associated with
 
@@ -250,3 +399,14 @@ def sync_roles(group_name: str, apps, schema_editor):
 
     for role in roles:
         role.sync_permissions()
+
+
+def sync_role(role_name: str, apps, schema_editor):
+    """
+    Syncs the permissions in the given role
+
+    Args:
+        role_name: the name of the role
+    """
+    role = Role.objects.get(name=role_name)
+    role.sync_permissions()

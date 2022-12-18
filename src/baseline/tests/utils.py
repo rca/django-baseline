@@ -5,7 +5,9 @@ import typing
 List = typing.List
 
 
-def get_content(path: str, mode: str = "r", _stack_depth: int = 1) -> str:
+def get_content(
+    path: str, mode: str = "r", parent_path: str = None, _stack_depth: int = 1
+) -> str:
     """
     Returns the content of the file at the given path
 
@@ -17,10 +19,11 @@ def get_content(path: str, mode: str = "r", _stack_depth: int = 1) -> str:
     Returns:
         the file's content
     """
-    stack = inspect.stack()
-    parent_frame = stack[_stack_depth]
-    parent_filename = parent_frame.filename
-    parent_path = os.path.dirname(parent_filename)
+    if not parent_path:
+        stack = inspect.stack()
+        parent_frame = stack[_stack_depth]
+        parent_filename = parent_frame.filename
+        parent_path = os.path.dirname(parent_filename)
 
     content_path = os.path.join(parent_path, "files", path)
 

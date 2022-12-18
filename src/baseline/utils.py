@@ -78,9 +78,16 @@ def get_permissions(
     Returns:
         a list of permission objects
     """
-    content_type = content_type_cls.objects.using(db_alias).get(
-        app_label=app_name, model=model_name
-    )
+    try:
+        content_type = content_type_cls.objects.using(db_alias).get(
+            app_label=app_name, model=model_name
+        )
+    except:
+        print(
+            f"unable to get content type from content_type_cls={content_type_cls}, db_alias={db_alias}, app_name={app_name}, model={model_name}"
+        )
+
+        raise
 
     content_type_queryset = content_type.permission_set.using(db_alias)
 
