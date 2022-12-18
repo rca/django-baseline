@@ -130,10 +130,10 @@ class MaintenanceEnvironmentSetting(EnvironmentSetting):
 
         default = None
         try:
-            if self.default is not self.UNSET:
-                default = self.default
-            elif maintenance and self.maintenance_default is not self.UNSET:
+            if maintenance and self.maintenance_default is not self.UNSET:
                 default = self.maintenance_default
+            elif self.default is not self.UNSET:
+                default = self.default
             elif not self.required:
                 default = None
             elif maintenance:
