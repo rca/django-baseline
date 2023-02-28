@@ -2,13 +2,35 @@
 import os
 import shlex
 
+GUNICORN_ACCESS_LOGFORMAT=os.environ.get("GUNICORN_ACCESS_LOGFORMAT", """'%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(M)s %(b)s "%({x-forwarded-for}i)s" "%(f)s" "%(a)s"'""")
+GUNICORN_THREADS=os.environ.get("GUNICORN_THREADS", "16")
+GUNICORN_TIMEOUT=os.environ.get("GUNICORN_TIMEOUT", "0")
+GUNICORN_WORKER_CLASS=os.environ.get("GUNICORN_WORKER_CLASS", "gevent")
+GUNICORN_WORKERS=os.environ.get("GUNICORN_WORKERS", "5")
+
 PORT = os.environ.get("PORT", "8000")
 SETTINGS_MODULE = os.environ["DJANGO_SETTINGS_MODULE"]
 PROJECT_PACKAGE = SETTINGS_MODULE.split(".", 1)[0]
 WSGI_MODULE = f"{PROJECT_PACKAGE}.wsgi"
 
+VERSION = os.environ.get("VERSION", "unknown")
+
 # update gunicorn invocation per Google sample application for Google Cloud Run
 # https://github.com/GoogleCloudPlatform/python-docs-samples/blob/HEAD/run/helloworld/Dockerfile#L38
-args = shlex.split(f"gunicorn --worker-class gevent --timeout 0 --workers 1 --threads 8 --bind 0.0.0.0:{PORT} {WSGI_MODULE}")
+# updated to have 5 workers (on per core + 1, and 16 threads per worker)
+# this gives the container the ability to handle 5*16=80 requests at a time, which matches
+# the default concurrency value in the Google Cloud Run configuration
+command = (
+    "gunicorn "
+    f"--access-logformat {GUNICORN_ACCESS_LOGFORMAT}"
+    f"--worker-class {GUNICORN_WORKER_CLASS} "
+    f"--timeout {GUNICORN_TIMEOUT} "
+    f"--workers {GUNICORN_WORKERS} "
+    f"--threads {GUNICORN_THREADS} "
+    f"--bind 0.0.0.0:{PORT} "
+    f"{WSGI_MODULE}"
+)
 
-os.execlp(args[0], *args)
+print(f"VERSION={VERSION}, command={command}")
+command_split = shlex.split(command)
+os.execlp(command_split[0], *command_split)

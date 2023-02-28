@@ -3,13 +3,17 @@ import typing
 import pytest
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.db import connections
 from rest_framework.test import APIClient
 
 from baseline import tests
 from baseline.types import ModelType
 
 if typing.TYPE_CHECKING:
-    from django.contrib.auth.models import Group
+    from django.contrib.auth.models import Permission
     from django.db.models import Model
 
 Callable = typing.Callable
@@ -25,6 +29,27 @@ class ModelError(Exception):
 
 def pytest_configure(config):
     tests.IS_PYTEST_RUNNING = True
+
+
+@pytest.fixture()
+def closed_test_transaction(db):
+    """
+    rolls back the outer test transaction and starts a fresh transaction
+    """
+    connection_name = "default"
+
+    # manually reset the connection that the django TestCase creates in order to
+    # create some objects that are available in a thread
+    connection = connections[connection_name]
+    connection.in_atomic_block = False
+    connection.rollback()
+
+    yield
+
+    # in order to let the upstream teardown work properly, make the connection
+    # appear as if it's in an atomic block
+    connection = connections[connection_name]
+    connection.in_atomic_block = True
 
 
 @pytest.fixture()
@@ -63,6 +88,77 @@ def get_api_client(get_user) -> "Callable":
             client.force_authenticate(user)
 
         return client
+
+    return fixture
+
+
+@pytest.fixture()
+def get_group(db, get_group_name):
+    """
+    Returns a function to get / create a group
+    """
+
+    def fixture(
+        *args,
+        _permissions: Iterable["Permission"] = None,
+        _save: bool = True,
+        **kwargs,
+    ) -> "User":
+        """
+
+        Args:
+            *args: Passed to User constructor
+            _permissions: a list of permissions to add to the instance
+            _save: whether to save the instance
+            **kwargs: Passed to User constructor
+
+        Returns:
+            a Group instance
+        """
+        defaults = dict(
+            name=get_group_name,
+        )
+        for k, v_callable in defaults.items():
+            if k not in kwargs or kwargs[k] is None:
+                kwargs[k] = v_callable()
+
+        instance = Group(*args, **kwargs)
+
+        # save the user object if needed
+        if _save:
+            instance.save()
+
+        if _permissions:
+            for permission in _permissions:
+                instance.permissions.add(permission)
+
+        return instance
+
+    return fixture
+
+
+@pytest.fixture()
+def get_group_name(db) -> "Callable":
+    """
+    Returns a function to get a unique group name
+    """
+
+    def fixture(prefix: str = "test_group") -> str:
+        """
+        Returns a unique group name
+
+        Args:
+            prefix: the group name prefix
+
+        Returns:
+            a group name
+        """
+        count = Group.objects.filter(name__startswith=prefix).count()
+        if count:
+            counter = count + 1
+            return f"{prefix}{counter}"
+
+        return prefix
 
     return fixture
 
@@ -172,6 +268,42 @@ def get_username(db) -> "Callable":
         return prefix
 
     return fixture
+
+
+@pytest.fixture(autouse=True)
+def reset_cache():
+    yield
+
+    cache.clear()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def request_mock():
+    """
+    mock out the request() function, which is the call that all HTTP methods make
+    """
+    with mock.patch("requests.api.request") as request_mock:
+        yield request_mock
+
+
+@pytest.fixture(scope="session", autouse=True)
+def requests_get_adapter():
+    web_patcher = mock.patch("requests.sessions.Session.get_adapter", spec=True)
+    _mock = web_patcher.start()
+
+    try:
+        yield _mock
+    finally:
+        web_patcher.stop()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def sleep_mock():
+    """
+    mock out the request() function, which is the call that all HTTP methods make
+    """
+    with mock.patch("time.sleep") as mocked:
+        yield mocked
 
 
 # any custom configuration below

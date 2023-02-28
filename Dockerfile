@@ -27,6 +27,8 @@ COPY src/ ${APP_DIR}/
 
 WORKDIR ${APP_DIR}
 
+RUN DJANGO_SETTINGS_MODULE=bltestproject.settings ./manage.py collectstatic --no-input
+
 ARG VERSION
 
 ENV VERSION=${VERSION}
