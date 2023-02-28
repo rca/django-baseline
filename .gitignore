@@ -12,3 +12,5 @@ venv
 db.sqlite3
 
 compose/env.*
+src/schema.yml
+staticfiles/
