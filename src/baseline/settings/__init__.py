@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "postgresql_setrole",
     "rest_framework",
+    "rest_framework.authtoken",
     "baseline",
     "roles",
 ]
