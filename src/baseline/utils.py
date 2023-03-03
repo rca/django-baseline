@@ -110,6 +110,15 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
     """
     Get the items in the given package path that match the requested type
 
+    For example, the following code in <app>/views/__init__.py imports GenericViewSet subclasses from modules into
+    the package:
+
+    ```
+    __locals = locals()
+    for item in get_package_items(__file__, __name__, GenericViewSet):
+        __locals[item.__name__] = item
+    ```
+
     Args:
         package_path: the package's location on disk, i.e. __file__
         package_name: the package name, i.e. __name__
