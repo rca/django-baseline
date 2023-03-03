@@ -33,6 +33,10 @@ ALLOWED_HOSTS = conversion.convert_list(
     get_setting("DJANGO_ALLOWED_HOSTS", default="", maintenance_default="*")
 )
 
+CORS_ALLOW_CREDENTIALS = conversion.convert_bool(
+    get_setting("CORS_ALLOW_CREDENTIALS", default="false")
+)
+
 CORS_ALLOWED_ORIGINS = conversion.convert_list(
     get_setting("CORS_ALLOWED_ORIGINS", default="")
 )
