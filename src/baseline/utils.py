@@ -2,6 +2,7 @@ import importlib
 import os
 import typing
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 
@@ -158,3 +159,31 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
             items.add(attr)
 
             yield attr
+
+
+def set_cookie(
+    response,
+    key,
+    value,
+    max_age=None,
+    expires=None,
+    domain=None,
+    path=None,
+    secure=True,
+    httponly=True,
+    samesite="None",
+):
+    domain = domain or settings.SESSION_COOKIE_DOMAIN
+    path = path or settings.SESSION_COOKIE_PATH
+
+    response.set_cookie(
+        key,
+        value,
+        max_age=max_age,
+        expires=expires,
+        domain=domain,
+        path=path,
+        secure=secure,
+        httponly=httponly,
+        samesite=samesite,
+    )
