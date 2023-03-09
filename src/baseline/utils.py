@@ -1,3 +1,4 @@
+import datetime
 import importlib
 import os
 import typing
@@ -14,6 +15,8 @@ if typing.TYPE_CHECKING:
 Any = typing.Any
 List = typing.List
 PermissionList = typing.Iterable["Permission"]
+
+EPOCH = datetime.datetime(1, 1, 1, 1, 1, 1)
 
 
 class Chunker:
