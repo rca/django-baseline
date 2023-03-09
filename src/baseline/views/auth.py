@@ -17,11 +17,10 @@ class AuthViewSet(viewsets.ModelViewSet):
     API Endpoint for logging in a user
     """
 
-    permission_classes = [AllowAny]
-
     queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    @action(methods=["post"], detail=False)
+    @action(methods=["post"], detail=False, permission_classes=[AllowAny])
     def login(self, request, *args, **kwargs):
         """
         Override the create endpoint
@@ -43,7 +42,7 @@ class AuthViewSet(viewsets.ModelViewSet):
 
         return response
 
-    @action(methods=["post"], detail=False)
+    @action(methods=["post"], detail=False, permission_classes=[AllowAny])
     def logout(self, request, *args, **kwargs):
         response = Response({"message": "ok"})
 

@@ -26,6 +26,26 @@ def get_login_response(get_user, get_api_client):
     return user, client, response
 
 
+def test_list(get_api_client):
+    """
+    ensure a GET request doesn't show all users
+    """
+    client = get_api_client()
+
+    url = reverse("auth-list")
+
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    # make sure that a logged-in user can't see anything either
+    client = get_api_client(create_user=True)
+
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
 def test_login(get_api_client, get_user):
     """
     ensure a cookie is set when logged in
