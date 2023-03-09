@@ -1,4 +1,7 @@
+import datetime
+
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
@@ -46,6 +49,7 @@ class AuthViewSet(viewsets.ModelViewSet):
     def logout(self, request, *args, **kwargs):
         response = Response({"message": "ok"})
 
-        set_cookie(response, "auth_token", None, expires=EPOCH)
+        soon = timezone.now() + datetime.timedelta(seconds=1)
+        set_cookie(response, "auth_token", "", expires=soon)
 
         return response
