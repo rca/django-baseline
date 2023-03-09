@@ -6,6 +6,7 @@ import typing
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from baseline.types import ModelType, StringList
 
@@ -178,6 +179,11 @@ def set_cookie(
 ):
     domain = domain or settings.SESSION_COOKIE_DOMAIN
     path = path or settings.SESSION_COOKIE_PATH
+
+    if not expires:
+        expires = timezone.now() + datetime.timedelta(
+            seconds=settings.SESSION_COOKIE_AGE
+        )
 
     response.set_cookie(
         key,
