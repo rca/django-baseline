@@ -1,16 +1,18 @@
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from baseline.serializers.auth import LoginSerializer
-from baseline.utils import set_cookie
+from baseline.serializers.user_serializer import UserSerializer
+from baseline.utils import EPOCH, set_cookie
 
 User = get_user_model()
 
 
-class LoginViewSet(viewsets.ModelViewSet):
+class AuthViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for logging in a user
     """
@@ -19,7 +21,8 @@ class LoginViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    @action(methods=["post"], detail=False)
+    def login(self, request, *args, **kwargs):
         """
         Override the create endpoint
         """
@@ -33,7 +36,17 @@ class LoginViewSet(viewsets.ModelViewSet):
         auth_token, _ = Token.objects.get_or_create(user=user)
         key = auth_token.key
 
-        response = Response({"message": "okay"})
-        set_cookie(response, "auth", key)
+        user_serializer = UserSerializer(instance=user)
+
+        response = Response(user_serializer.data)
+        set_cookie(response, "auth_token", key)
+
+        return response
+
+    @action(methods=["post"], detail=False)
+    def logout(self, request, *args, **kwargs):
+        response = Response({"message": "ok"})
+
+        set_cookie(response, "auth_token", None, expires=EPOCH)
 
         return response
