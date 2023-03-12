@@ -16,3 +16,18 @@ class NamedModel(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class IndexedNamedModel(models.Model):
+    """
+    Model that provides an indexed name to a model
+    """
+
+    name = models.CharField(max_length=256, db_index=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return str(self.name)
+
