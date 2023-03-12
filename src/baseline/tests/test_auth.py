@@ -69,4 +69,4 @@ def test_logout(get_api_client, get_user):
     response = client.post(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.cookies["auth_token"].value == "None"
+    assert response.cookies["auth_token"].value == ""
