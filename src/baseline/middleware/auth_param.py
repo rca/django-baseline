@@ -3,6 +3,8 @@ Middleware to authenticate with a GET parameter
 """
 import json
 
+from rest_framework.authtoken.models import Token
+
 AUTHORIZATION_HEADER = "HTTP_AUTHORIZATION"
 
 
@@ -30,7 +32,13 @@ class AuthParamMiddleware:
             auth_token = request.COOKIES.get("auth_token")
 
         if auth_token:
-            request.META[AUTHORIZATION_HEADER] = f"Token {auth_token}"
+            # if the token does not exist in the database, do not update the authorization header
+            try:
+                Token.objects.get(key=auth_token)
+                request.META[AUTHORIZATION_HEADER] = f"Token {auth_token}"
+            except Token.DoesNotExist:
+                print("bad token, not updating auth header")
+                pass
 
         response = self.get_response(request)
 
