@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from baseline.serializers.auth import LoginSerializer
 from baseline.serializers.user_serializer import UserSerializer
-from baseline.utils import EPOCH, set_cookie
+from baseline.utils import set_cookie
 
 User = get_user_model()
 
