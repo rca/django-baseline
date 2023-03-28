@@ -1,4 +1,5 @@
 import inspect
+import json
 import os
 import typing
 
@@ -28,6 +29,21 @@ def get_content(
     content_path = os.path.join(parent_path, "files", path)
 
     return open(content_path, mode=mode).read()
+
+
+def get_data(path: str) -> dict:
+    """
+    Returns JSON data from the given path
+
+    Args:
+        path: location of the test file
+
+    Returns:
+        a data dictionary from the JSON file
+    """
+    content = get_content(path, _stack_depth=2)
+
+    return json.loads(content)
 
 
 def get_lines(path: str) -> List[str]:
