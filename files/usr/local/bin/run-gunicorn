@@ -2,11 +2,14 @@
 import os
 import shlex
 
-GUNICORN_ACCESS_LOGFORMAT=os.environ.get("GUNICORN_ACCESS_LOGFORMAT", """'%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(M)s %(b)s "%({x-forwarded-for}i)s" "%(f)s" "%(a)s"'""")
-GUNICORN_THREADS=os.environ.get("GUNICORN_THREADS", "16")
-GUNICORN_TIMEOUT=os.environ.get("GUNICORN_TIMEOUT", "0")
-GUNICORN_WORKER_CLASS=os.environ.get("GUNICORN_WORKER_CLASS", "gevent")
-GUNICORN_WORKERS=os.environ.get("GUNICORN_WORKERS", "5")
+GUNICORN_ACCESS_LOGFORMAT = os.environ.get(
+    "GUNICORN_ACCESS_LOGFORMAT",
+    """'%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(M)s %(b)s "%({x-forwarded-for}i)s" "%(f)s" "%(a)s"'""",
+)
+GUNICORN_THREADS = os.environ.get("GUNICORN_THREADS", "16")
+GUNICORN_TIMEOUT = os.environ.get("GUNICORN_TIMEOUT", "0")
+GUNICORN_WORKER_CLASS = os.environ.get("GUNICORN_WORKER_CLASS", "gevent")
+GUNICORN_WORKERS = os.environ.get("GUNICORN_WORKERS", "5")
 
 PORT = os.environ.get("PORT", "8000")
 SETTINGS_MODULE = os.environ["DJANGO_SETTINGS_MODULE"]
