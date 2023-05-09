@@ -10,7 +10,12 @@ class FullDjangoModelPermissions(permissions.DjangoModelPermissions):
     perms_map.update({"GET": ["%(app_label)s.view_%(model_name)s"]})
 
     def has_permission(self, request, view):
-        model_cls = view.queryset.model
+        # when there is no queryset in the view, bail
+        try:
+            model_cls = view.queryset.model
+        except AttributeError:
+            return
+
         kwargs = {
             "action": view.action,
             "app_label": model_cls._meta.app_label,
