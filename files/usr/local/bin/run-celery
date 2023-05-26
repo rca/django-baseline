@@ -2,4 +2,4 @@
 set -e
 set -x
 
-exec celery -A webproject worker
+exec celery -A webproject worker "$@"
