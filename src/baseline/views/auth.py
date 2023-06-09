@@ -9,10 +9,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from baseline.serializers.auth import LoginSerializer
-from baseline.serializers.user_serializer import UserSerializer
-from baseline.utils import set_cookie
+from baseline.utils import get_user_serializer, set_cookie
 
 User = get_user_model()
+UserSerializer = get_user_serializer()
 
 
 class AuthViewSet(viewsets.ModelViewSet):

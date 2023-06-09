@@ -165,6 +165,14 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
             yield attr
 
 
+def get_user_serializer():
+    module_name, class_name = settings.BASELINE_USER_SERIALIZER.rsplit(".", 1)
+
+    module = importlib.import_module(module_name)
+
+    return getattr(module, class_name)
+
+
 def set_cookie(
     response,
     key,

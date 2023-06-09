@@ -26,6 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_setting("DJANGO_SECRET_KEY", maintenance_default="super-secret-key")
 
+BASELINE_USER_SERIALIZER = "baseline.serializers.user_serializer.UserSerializer"
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = conversion.convert_bool(get_setting("DJANGO_DEBUG", default="False"))
 
