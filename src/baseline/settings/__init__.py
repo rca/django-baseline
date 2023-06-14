@@ -15,6 +15,7 @@ from pathlib import Path
 import conversion
 import dj_database_url
 
+from .environment import *
 from .utils import get_setting, is_test
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
