@@ -83,6 +83,7 @@ if is_test():
         BASELINE_TEST_APP,
     ]
 
+AUTHENTICATION_MIDDLEWARE = "django.contrib.auth.middleware.AuthenticationMiddleware"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -91,7 +92,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "baseline.middleware.auth_param.AuthParamMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    AUTHENTICATION_MIDDLEWARE,
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
