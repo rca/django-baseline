@@ -18,6 +18,7 @@ List = typing.List
 PermissionList = typing.Iterable["Permission"]
 
 EPOCH = datetime.datetime(1, 1, 1, 1, 1, 1)
+USER_MFA_STATE_CACHE_KEY = "user-mfa-state-{uuid}"
 
 
 class Chunker:
@@ -163,6 +164,19 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
             items.add(attr)
 
             yield attr
+
+
+def get_mfa_cache_key(cache_id: str) -> str:
+    """
+    Returns a MFA cache key
+
+    Args:
+        cache_id: a unique ID ... UUID
+
+    Returns:
+        str: the cache key
+    """
+    return USER_MFA_STATE_CACHE_KEY.format(uuid=cache_id)
 
 
 def get_user_serializer():
