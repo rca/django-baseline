@@ -5,7 +5,9 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 
-def get_login_response(get_user, get_api_client):
+def get_login_response(
+    get_user, get_api_client, extra_user_data=None, assert_status=status.HTTP_200_OK
+):
     username = "test@test.com"
     password = "test123"
 
@@ -14,6 +16,9 @@ def get_login_response(get_user, get_api_client):
         "password": password,
     }
 
+    if extra_user_data:
+        data.update(extra_user_data)
+
     user = get_user(**data)
     client = get_api_client()
 
@@ -21,7 +26,7 @@ def get_login_response(get_user, get_api_client):
 
     response = client.post(url, data=data, format="json")
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == assert_status
 
     return user, client, response
 
@@ -57,6 +62,25 @@ def test_login(get_api_client, get_user):
     assert result["username"] == username
 
     assert response.cookies["auth_token"].value == user.auth_token.key
+
+
+def test_login_with_mfa(get_api_client, get_user):
+    """
+    ensure we get an accepted status and no cookie when MFA is enabled for a user
+    """
+    user, client, response = get_login_response(
+        get_user,
+        get_api_client,
+        extra_user_data=dict(_setup_mfa=True),
+        assert_status=status.HTTP_202_ACCEPTED,
+    )
+
+    # make sure the auth token cookie is not set
+    assert "auth_token" not in response.cookies
+
+    result = response.data["result"]
+
+    assert result["mfa_required"] == True
 
 
 def test_logout(get_api_client, get_user):
