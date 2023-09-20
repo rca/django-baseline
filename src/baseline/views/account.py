@@ -18,7 +18,6 @@ class AccountViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_object(self):
-        print(self.kwargs)
         pk = self.kwargs.get("pk")
         if pk == "self":
             pk = self.request.user.pk
