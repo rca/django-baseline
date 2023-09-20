@@ -22,9 +22,13 @@ User = get_user_model()
 UserSerializer = get_user_serializer()
 
 
-def get_logged_in_response(user: "User"):
+def get_logged_in_response(user: "User", mfa_verified: bool = None):
     """
     Returns response when user is logged in properly
+
+    Args:
+        user: the user that is logged in
+        mfa_verified: whether mfa was verified
     """
     auth_token, _ = Token.objects.get_or_create(user=user)
     key = auth_token.key
@@ -33,6 +37,12 @@ def get_logged_in_response(user: "User"):
 
     response = Response(user_serializer.data)
     set_cookie(response, "auth_token", key)
+
+    message = f"login, user={user}, user.pk={user.pk}"
+    if mfa_verified:
+        message = f"{message}, mfa_verified={mfa_verified}"
+
+    print(message)
 
     return response
 
@@ -76,7 +86,6 @@ class AuthViewSet(viewsets.ModelViewSet):
             # but we still need to bug you for an MFA challenge response."
             return Response(response_body, status=status.HTTP_202_ACCEPTED)
 
-        print(f"login user={user}, {user.pk}")
         return get_logged_in_response(user)
 
     @action(methods=["post"], detail=False, permission_classes=[AllowAny])
@@ -102,4 +111,4 @@ class AuthViewSet(viewsets.ModelViewSet):
         serializer = MFASerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
-        return get_logged_in_response(serializer.user)
+        return get_logged_in_response(serializer.user, mfa_verified=True)
