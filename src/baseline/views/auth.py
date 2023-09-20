@@ -76,6 +76,7 @@ class AuthViewSet(viewsets.ModelViewSet):
             # but we still need to bug you for an MFA challenge response."
             return Response(response_body, status=status.HTTP_202_ACCEPTED)
 
+        print(f"login user={user}, {user.pk}")
         return get_logged_in_response(user)
 
     @action(methods=["post"], detail=False, permission_classes=[AllowAny])
