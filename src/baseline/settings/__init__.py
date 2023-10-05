@@ -49,6 +49,11 @@ CSRF_TRUSTED_ORIGINS = conversion.convert_list(
     get_setting("CSRF_TRUSTED_ORIGINS", default="")
 )
 
+if not CSRF_TRUSTED_ORIGINS:
+    print(f"WARNING: setting CSRF_TRUSTED_ORIGINS to CORS_ALLOWED_ORIGINS")
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+print(f"CSRF_TRUSTED_ORIGINS={CSRF_TRUSTED_ORIGINS}")
 
 # pypy compatibility
 PYPY_ENABLE_COMPAT = conversion.convert_bool(
