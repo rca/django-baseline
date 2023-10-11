@@ -8,6 +8,7 @@ if typing.TYPE_CHECKING:
 ModelType = typing.Type[ModelBase]
 OptionalDate = typing.Optional["date"]
 StringList = typing.Iterable[str]
+StringOrList = typing.Union[str, list]
 UUIDString = str
 
 JSON = typing.Union[
