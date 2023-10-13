@@ -7,6 +7,7 @@ if typing.TYPE_CHECKING:
 
 ModelType = typing.Type[ModelBase]
 OptionalDate = typing.Optional["date"]
+StringDict = typing.Dict[str, str]
 StringList = typing.Iterable[str]
 StringOrList = typing.Union[str, list]
 UUIDString = str
