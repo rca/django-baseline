@@ -1,4 +1,5 @@
 import inspect
+import json
 import os
 import typing
 
@@ -19,15 +20,32 @@ def get_content(
     Returns:
         the file's content
     """
+    files = ""
     if not parent_path:
+        files = "files"
         stack = inspect.stack()
         parent_frame = stack[_stack_depth]
         parent_filename = parent_frame.filename
         parent_path = os.path.dirname(parent_filename)
 
-    content_path = os.path.join(parent_path, "files", path)
+    content_path = os.path.join(parent_path, files, path)
 
     return open(content_path, mode=mode).read()
+
+
+def get_data(path: str, parent_path: str = None) -> dict:
+    """
+    Returns JSON data from the given path
+
+    Args:
+        path: location of the test file
+
+    Returns:
+        a data dictionary from the JSON file
+    """
+    content = get_content(path, parent_path=parent_path, _stack_depth=2)
+
+    return json.loads(content)
 
 
 def get_lines(path: str) -> List[str]:

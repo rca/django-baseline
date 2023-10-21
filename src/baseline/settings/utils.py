@@ -3,8 +3,10 @@ def get_setting(*args, **kwargs) -> str:
     Returns the value for the given setting
 
     Args:
-        *args: args to be passed to the setting class
-        **kwargs: kwargs to be passed to the setting class
+        name: the setting's name
+        default: the value that should be used if the setting is not defined
+        maintenance_default: the value that should be used if the setting is not defined and the app is in maintenance mode
+        required: whether the value is required
 
     Returns:
         str: the setting's value

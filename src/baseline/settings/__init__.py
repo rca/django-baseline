@@ -15,6 +15,7 @@ from pathlib import Path
 import conversion
 import dj_database_url
 
+from .environment import *
 from .utils import get_setting, is_test
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,11 +27,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_setting("DJANGO_SECRET_KEY", maintenance_default="super-secret-key")
 
+BASELINE_USER_SERIALIZER = "baseline.serializers.user_serializer.UserSerializer"
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = conversion.convert_bool(get_setting("DJANGO_DEBUG", default="False"))
 
 ALLOWED_HOSTS = conversion.convert_list(
     get_setting("DJANGO_ALLOWED_HOSTS", default="", maintenance_default="*")
+)
+
+CORS_ALLOW_CREDENTIALS = conversion.convert_bool(
+    get_setting("CORS_ALLOW_CREDENTIALS", default="false")
 )
 
 CORS_ALLOWED_ORIGINS = conversion.convert_list(
@@ -41,6 +49,11 @@ CSRF_TRUSTED_ORIGINS = conversion.convert_list(
     get_setting("CSRF_TRUSTED_ORIGINS", default="")
 )
 
+if not CSRF_TRUSTED_ORIGINS:
+    print(f"WARNING: setting CSRF_TRUSTED_ORIGINS to CORS_ALLOWED_ORIGINS")
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+print(f"CSRF_TRUSTED_ORIGINS={CSRF_TRUSTED_ORIGINS}")
 
 # pypy compatibility
 PYPY_ENABLE_COMPAT = conversion.convert_bool(
@@ -64,6 +77,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "postgresql_setrole",
     "rest_framework",
+    "rest_framework.authtoken",
     "baseline",
     "roles",
 ]
@@ -74,6 +88,7 @@ if is_test():
         BASELINE_TEST_APP,
     ]
 
+AUTHENTICATION_MIDDLEWARE = "django.contrib.auth.middleware.AuthenticationMiddleware"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -81,7 +96,8 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "baseline.middleware.auth_param.AuthParamMiddleware",
+    AUTHENTICATION_MIDDLEWARE,
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -164,6 +180,11 @@ print(f"STATIC_ROOT={STATIC_ROOT}")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",

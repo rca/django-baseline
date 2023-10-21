@@ -1,9 +1,12 @@
+import datetime
 import importlib
 import os
 import typing
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from baseline.types import ModelType, StringList
 
@@ -13,6 +16,9 @@ if typing.TYPE_CHECKING:
 Any = typing.Any
 List = typing.List
 PermissionList = typing.Iterable["Permission"]
+
+EPOCH = datetime.datetime(1, 1, 1, 1, 1, 1)
+USER_MFA_STATE_CACHE_KEY = "user-mfa-state-{uuid}"
 
 
 class Chunker:
@@ -110,6 +116,15 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
     """
     Get the items in the given package path that match the requested type
 
+    For example, the following code in <app>/views/__init__.py imports GenericViewSet subclasses from modules into
+    the package:
+
+    ```
+    __locals = locals()
+    for item in get_package_items(__file__, __name__, GenericViewSet):
+        __locals[item.__name__] = item
+    ```
+
     Args:
         package_path: the package's location on disk, i.e. __file__
         package_name: the package name, i.e. __name__
@@ -149,3 +164,57 @@ def get_package_items(package_path: str, package_name: str, base: typing.Type):
             items.add(attr)
 
             yield attr
+
+
+def get_mfa_cache_key(cache_id: str) -> str:
+    """
+    Returns a MFA cache key
+
+    Args:
+        cache_id: a unique ID ... UUID
+
+    Returns:
+        str: the cache key
+    """
+    return USER_MFA_STATE_CACHE_KEY.format(uuid=cache_id)
+
+
+def get_user_serializer():
+    module_name, class_name = settings.BASELINE_USER_SERIALIZER.rsplit(".", 1)
+
+    module = importlib.import_module(module_name)
+
+    return getattr(module, class_name)
+
+
+def set_cookie(
+    response,
+    key,
+    value,
+    max_age=None,
+    expires=None,
+    domain=None,
+    path=None,
+    secure=True,
+    httponly=True,
+    samesite="None",
+):
+    domain = domain or settings.SESSION_COOKIE_DOMAIN
+    path = path or settings.SESSION_COOKIE_PATH
+
+    if not expires:
+        expires = timezone.now() + datetime.timedelta(
+            seconds=settings.SESSION_COOKIE_AGE
+        )
+
+    response.set_cookie(
+        key,
+        value,
+        max_age=max_age,
+        expires=expires,
+        domain=domain,
+        path=path,
+        secure=secure,
+        httponly=httponly,
+        samesite=samesite,
+    )

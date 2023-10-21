@@ -1,4 +1,4 @@
-FROM python:3.8-slim-bullseye AS base
+FROM --platform=linux/amd64 python:3.11-slim-bullseye AS base
 MAINTAINER Roberto Aguilar <r@rreboto.com>
 
 RUN apt-get update \
