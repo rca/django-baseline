@@ -22,7 +22,7 @@ VERSION = os.environ.get("VERSION", "unknown")
 # the default concurrency value in the Google Cloud Run configuration
 command = (
     "gunicorn "
-    f"--access-logformat {GUNICORN_ACCESS_LOGFORMAT}"
+    f"--access-logformat {GUNICORN_ACCESS_LOGFORMAT} "
     f"--worker-class {GUNICORN_WORKER_CLASS} "
     f"--timeout {GUNICORN_TIMEOUT} "
     f"--workers {GUNICORN_WORKERS} "
