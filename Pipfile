@@ -18,6 +18,7 @@ django-postgresql-setrole = "*"
 django-redis = "*"
 django-simple-history = "*"
 django-social-auth = "*"
+django-two-factor-auth = {extras = ["phonenumberslite"], version = "*"}
 djangorestframework = "*"
 gevent = "*"
 gunicorn = "*"
