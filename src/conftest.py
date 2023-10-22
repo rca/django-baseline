@@ -1,5 +1,7 @@
 import typing
 
+from unittest import mock
+
 import pytest
 
 from django.contrib.auth import get_user_model
@@ -300,6 +302,17 @@ def request_mock():
 
 @pytest.fixture(scope="session", autouse=True)
 def requests_get_adapter():
+    """
+    Mocks out any interaction to the outside world.  Use like so:
+
+    response = Response()
+    response.status_code = 200
+    response._content = b'{"some":"junk"}'
+    requests_get_adapter.return_value.send.return_value = response
+
+    Returns:
+        Mock session adapter
+    """
     web_patcher = mock.patch("requests.sessions.Session.get_adapter", spec=True)
     _mock = web_patcher.start()
 
