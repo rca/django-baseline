@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import connections
+from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework.test import APIClient
 
 from baseline import tests
@@ -206,6 +207,7 @@ def get_user(db, get_username) -> "Callable":
         groups: Iterable["Group"] = None,
         _permissions: Iterable["Permission"] = None,
         _save: bool = True,
+        _setup_mfa: bool = False,
         **kwargs,
     ) -> "User":
         """
@@ -215,6 +217,7 @@ def get_user(db, get_username) -> "Callable":
             groups: a list of groups to be added to the user
             _permissions: a list of permissions to add to the user
             _save: whether to save the user object
+            _setup_mfa: whether to setup MFA for this user
             **kwargs: Passed to User constructor
 
         If groups are passed in or a username not specified, the user must be saved to the database, in which case the test
@@ -232,8 +235,11 @@ def get_user(db, get_username) -> "Callable":
 
         user = User(*args, **kwargs)
 
+        if "password" in kwargs:
+            user.set_password(kwargs["password"])
+
         # save the user object if needed
-        if groups or _save:
+        if groups or _save or _setup_mfa:
             user.save()
 
         if groups:
@@ -242,6 +248,12 @@ def get_user(db, get_username) -> "Callable":
         if _permissions:
             for permission in _permissions:
                 user.user_permissions.add(permission)
+
+        mfa_device = None
+        if _setup_mfa:
+            mfa_device = TOTPDevice.objects.create(
+                user=user, name="default", confirmed=True
+            )
 
         return user
 
